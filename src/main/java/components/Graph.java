@@ -1,0 +1,243 @@
+package components;
+
+import java.util.*;
+
+import org.apache.commons.math3.distribution.AbstractRealDistribution;
+
+import support.OutputUtils;
+import attackGraph.AttackStep;
+import attackGraph.AttackStepMax;
+import attackGraph.AttackStepMin;
+import attackGraph.Defense;
+import attackGraph.Order;
+
+public class Graph implements Observer {
+
+   private List<AttackStep>         attackSteps             = new ArrayList<>();
+
+   private GraphTransformer         graphTransformer        = new GraphTransformer();
+   private GraphComputer            graphComputer           = new GraphComputer();
+   private GraphOrdinalComputer     graphOrdinalComputer    = new GraphOrdinalComputer();
+   private static int               randomSeed              = 2;
+   public static Random             rand                    = new Random(randomSeed);
+   private String                   ownerComponent;
+   private boolean                  upToDate                = false;
+   private AttackStep               source;
+
+   public Graph(Component ownerComponent) {
+      this.ownerComponent = ownerComponent.getName();
+   }
+
+   public Graph(String name) {this.ownerComponent = name;}
+
+   public void sample() {
+      // TODO Introduce defenses.
+      // TODO We might also want to sample existence. But the introduction of defenses might be quite similar in effec.
+      attackStepsAsSet().forEach(AttackStep::sample);
+   }
+
+   public void reduce() {
+      graphTransformer.reduce(this);
+   }
+
+   public void compute() {graphComputer.computeGraph(this); }
+
+   public void ordinalCompute(AttackStep source) { graphOrdinalComputer.ordinalCompute(this, source); }
+
+   public void updateDescendantsOfSource() {
+      if (!upToDate) {
+         OutputUtils.printVerbose("Descendants of "+source.getName()+" are being updated");
+         source.clearDescendants();
+         source.addDescendants(source.getProgenyI());
+         upToDate = true;
+      }
+   }
+
+   public void computeDescendantsOf(AttackStep source) {
+      upToDate = false;
+      this.source = source;
+      updateDescendantsOfSource();
+   }
+
+   /* Resets */
+
+   public void softReset() {
+      attackSteps.forEach(AttackStep::softReset);
+   }
+
+   public void ordinalReset() {
+      attackSteps.forEach(AttackStep::ordinalReset);
+   }
+
+   // hardReset() also reseeds the PRNG.
+   protected void hardReset() {
+      attackSteps.forEach(AttackStep::hardReset);
+   }
+
+   /* AttackStep Builders */
+
+   public AttackStep newAttackStepMin(String name, AbstractRealDistribution localTtcDistribution, Order order) {
+      AttackStepMin attackStep = new AttackStepMin(name, localTtcDistribution, order);
+      addAttackStep(attackStep);
+      return attackStep;
+   }
+
+   public AttackStep newAttackStepMax(String name, AbstractRealDistribution localTtcDistribution, Order order) {
+      AttackStepMax attackStep = new AttackStepMax(name, localTtcDistribution, order);
+      addAttackStep(attackStep);
+      return attackStep;
+   }
+
+   public Defense newDefense(String name, boolean isEnabled, boolean isExitStep) {
+      Defense defense = new Defense(name, isEnabled, isExitStep);
+      addAttackStep(defense);
+      return defense;
+   }
+
+
+   /* Getters and Setters */
+
+   public boolean containsStep(AttackStep candidateAttackStep) {
+      for (AttackStep existingAttackStep : attackStepsAsSet()) {
+         if (candidateAttackStep.getName().equals(existingAttackStep.getName())) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   public AttackStep getAttackStep(String name) {
+      for (AttackStep attackStep : attackStepsAsSet()) {
+         if (attackStep.getName().equals(name)) {
+            return attackStep;
+         }
+      }
+      return null;
+   }
+
+   public AttackStep getEquivalentAttackStep(AttackStep mergedAttackStep) {
+      for (AttackStep attackStep : attackStepsAsSet()) {
+         if (attackStep.isEquivalentTo(mergedAttackStep)) {
+            return attackStep;
+         }
+      }
+      System.out.println("There is no cloned or reduced attack step with an id that matches " + mergedAttackStep.getName() + ".");
+      return null;
+   }
+
+   public AttackStep getAttackStepContainingSubString(String subString) {
+      for (AttackStep attackStep : attackStepsAsSet()) {
+         if (attackStep.getName().matches(".*" + subString + ".*")) {
+            return attackStep;
+         }
+      }
+      throw new IllegalArgumentException("There is no attack step with the name " + subString + ".");
+   }
+
+   public List<AttackStep> getEntrySteps() {
+      List<AttackStep> entrySteps = new ArrayList<>();
+      for (AttackStep attackStep : attackSteps) {
+         if (attackStep.isEntryStep()) {
+            entrySteps.add(attackStep);
+         }
+      }
+      return entrySteps;
+   }
+
+   public List<AttackStep> getMidSteps() {
+      List<AttackStep> midSteps = new ArrayList<>();
+      for (AttackStep attackStep : attackSteps) {
+         if (attackStep.isMidStep()) {
+            midSteps.add(attackStep);
+         }
+      }
+      return midSteps;
+   }
+
+   public List<AttackStep> getExitSteps() {
+      List<AttackStep> exitSteps = new ArrayList<>();
+      for (AttackStep attackStep : attackSteps) {
+         if (attackStep.isExitStep()) {
+            exitSteps.add(attackStep);
+         }
+      }
+      return exitSteps;
+   }
+
+   private void removeAttackStep(AttackStep as) {
+      attackSteps.remove(as);
+   }
+
+   public void clearAttackStep(AttackStep as) {
+      removeAttackStep(as);
+      as.clear();
+   }
+
+   public void clearAttackSteps(Set<AttackStep> attackSteps) {
+      for (AttackStep attackStep : attackSteps) {
+         clearAttackStep(attackStep);
+      }
+   }
+
+   public void zeroEntrySteps() {
+// TODO remove this loop by keep track of the entrysteps?
+      for (AttackStep attackStep : attackSteps) {
+         if (attackStep.isEntryStep()) {
+            OutputUtils.printVeryVerbose("Zeroing TTC of " + attackStep.getName() + " to " + attackStep.getLocalTtc());
+            attackStep.setTtc(attackStep.getLocalTtc());
+            attackStep.setExtremeTtcSoFar(attackStep.getLocalTtc());
+         }
+         else {
+            attackStep.setTtc(attackStep.getDefaultTtc());
+            attackStep.setExtremeTtcSoFar(attackStep.getDefaultTtc());
+         }
+      }
+   }
+
+   public void integrateSubgraph(Graph subGraph) {
+      subGraph.attackSteps.stream().forEach(as -> addAttackStep(as));
+      hardReset();
+   }
+
+   public int size() {
+      return attackStepsAsSet().size();
+   }
+
+   public void addAttackStep(AttackStep attackStep) {
+      attackStep.addObserver(this);
+      attackSteps.add(attackStep);
+   }
+
+   public List<AttackStep> attackStepsAsList() {
+      return attackSteps;
+   }
+
+   public Set<AttackStep> attackStepsAsSet() {
+      return new HashSet<>(attackSteps);
+   }
+
+   public AttackStep getAttackStep(int index) {
+      return attackSteps.get(index);
+   }
+
+   public String getOwnerComponentName() {
+      return ownerComponent;
+   }
+
+   public void addAttackSteps(AttackStep... atts) {
+      for (AttackStep as: atts) {
+         addAttackStep(as);
+      }
+   }
+
+   @Override
+   public void update(Observable o, Object arg) {
+      if (arg.equals(-1)) this.removeAttackStep((AttackStep) o);
+      if (upToDate) {
+         assert (o instanceof AttackStep);
+         OutputUtils.printVerbose("Progenies have changed says " + o + "! updating graph " + getOwnerComponentName() + "...");
+         this.upToDate = false;
+      }
+   }
+
+}
