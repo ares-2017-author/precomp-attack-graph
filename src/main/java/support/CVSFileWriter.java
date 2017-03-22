@@ -3,8 +3,8 @@ package support;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Source from https://examples.javacodegeeks.com/core-java/apache/commons/csv-commons/writeread-csv-files-with-apache-commons-csv-example/
  */
+
 public class CVSFileWriter {
     //Delimiter used in CSV file
     private static final String NEW_LINE_SEPARATOR = "\n";
@@ -20,7 +21,8 @@ public class CVSFileWriter {
     private static final Object[] FILE_HEADER = {"id", "Inital Number of AttackSteps",
             "Number of AttackSteps After Reduction", "Execution time (ms)", "Number of EntrySteps", "Number of ExitSteps",
             "Maximum Nbr of Children per AttackStep", "Proportion of BinomialChildren", "Number of maxOldParents",
-            "Proportion of BinomialOldParents", "Proportion of AttackStep OR"
+            "Proportion of BinomialOldParents", "Proportion of AttackStep OR", "Lowest Nbr of Children", "Highest Nbr of Children",
+            "Mean Nbr of Children", "Lowest Nbr of Parents", "Highest Nbr of Parents", "Mean Nbr of Parents"
     };
 
     //Create the CSVFormat object with "\n" as a record delimiter
@@ -36,18 +38,9 @@ public class CVSFileWriter {
 
     public void reset(String fileName) {
         try {
-            boolean append = false;
-            File csvFile = new File(fileName);
-            if (csvFile.exists())
-            fileWriter = new FileWriter(fileName, append);
+            fileWriter = new FileWriter(fileName);
             csvFilePrinter = new CSVPrinter(fileWriter, CSV_FILE_FORMAT);
-            if (append){
-                BufferedReader br = new BufferedReader(new FileReader(csvFile));
-                String headers = br.readLine();
-                if (headers.isEmpty() || !headers.contains("After Reduction,Execution time (ms),Number of EntrySteps,"))
-                    csvFilePrinter.printRecord(FILE_HEADER);
-            } else csvFilePrinter.printRecord(FILE_HEADER);
-            //TODO Read CSV, retrieve records, and put them to the exclusion list for IPOG
+            csvFilePrinter.printRecord(FILE_HEADER);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,7 +59,8 @@ public class CVSFileWriter {
 
     public void newRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, int maxChildren,
                           double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
-                          double pMinAttackSteps, int nbAttackStepsReduced, double execTime) {
+                          double pMinAttackSteps, int nbAttackStepsReduced, double execTime, int minChildrenNb,
+                          int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
         List<String> record = new LinkedList<>();
         record.add(Integer.toString(idCount));
         record.add(Integer.toString(nbAttackStepsUnreduced));
@@ -79,6 +73,12 @@ public class CVSFileWriter {
         record.add(Integer.toString(maxOldParents));
         record.add(Double.toString(pBinomialOldParents));
         record.add(Double.toString(pMinAttackSteps));
+        record.add(Integer.toString(minChildrenNb));
+        record.add(Integer.toString(maxChildrenNb));
+        record.add(Float.toString(meanChildrenNb));
+        record.add(Integer.toString(minParentsNb));
+        record.add(Integer.toString(maxParentsNb));
+        record.add(Float.toString(meanParentsNb));
         if (idCount > 26) {
             System.out.println(record.stream().collect(Collectors.joining("; ")));
         }

@@ -42,7 +42,7 @@ public class PerfEval {
         OutputUtils.printVerbose("Iterations: " + cpt);
     }
 
-    public static void main( String[] args) {
+    public static void main3( String[] args) {
 
         CVSFileWriter cvsFileWriter = new CVSFileWriter("graph-experiments-3ways.csv");
         TimeWatch tm;
@@ -55,24 +55,163 @@ public class PerfEval {
                     (int)testData[3], (double)testData[4], (int)testData[5], (double)testData[6], (double)testData[7]);
             graph.sample();
             int real_size = graph.size();
+            float mean_parents = graph.meanParentNbr();
+            float mean_children = graph.meanChildrenNbr();
+            int min_children = graph.minChildrenNbr();
+            int max_children = graph.maxChildrenNbr();
+            int min_parents = graph.minParentsNbr();
+            int max_parents = graph.maxParentsNbr();
             tm = TimeWatch.start();
             graph.reduce();
             double reduce_time = tm.time(TimeUnit.MILLISECONDS);
             cvsFileWriter.newRecord((int)testData[0], (int)testData[1], real_size,
                     (int)testData[3], (double)testData[4], (int)testData[5], (double)testData[6], (double)testData[7],
-                    graph.size(),reduce_time);
+                    graph.size(),reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
+                    mean_parents);
             cpt++;
         }
         cvsFileWriter.close();
     }
 
-    public static void main3(String args[]) {
-        Graph graph = TestUtils.generateRandomGraph(12, 28, 100,
-                17, 0.35, 36, 0.25, 0.6);
-        graph.sample();
-        System.out.println("unreduced steps: "+graph.size());
-        graph.reduce();
-        System.out.println("reduced steps: "+graph.size());
+    /* Individual experiments */
+    public static void main(String args[]) {
+        CVSFileWriter cvsFileWriter = new CVSFileWriter("graph-experiments-indiv.csv");
+        TimeWatch tm;
+        int nEntrySteps = 3;
+        int nExitSteps = 4;
+        int maxAttackSteps = 500;
+        int maxChildren = 7;
+        double pBinomialChildren = 0.6;
+        int maxOldParents = 6;
+        double pBinomialOldParents = 0.5;
+        double pMinAttackSteps = 0.65;
+
+        /* **** ENTRY STEPS **** */
+        for (int nEntry = 1; nEntry < 100; nEntry = nEntry + 4) {
+            Graph graph = TestUtils.generateRandomGraph(nEntry, nExitSteps, maxAttackSteps,
+                    maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents, pMinAttackSteps);
+            graph.sample();
+            int real_size = graph.size();
+            float mean_parents = graph.meanParentNbr();
+            float mean_children = graph.meanChildrenNbr();
+            int min_children = graph.minChildrenNbr();
+            int max_children = graph.maxChildrenNbr();
+            int min_parents = graph.minParentsNbr();
+            int max_parents = graph.maxParentsNbr();
+            tm = TimeWatch.start();
+            graph.reduce();
+            double reduce_time = tm.time(TimeUnit.MILLISECONDS);
+            cvsFileWriter.newRecord(nEntry, nExitSteps, real_size, maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents,
+                    pMinAttackSteps, graph.size(), reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
+                    mean_parents);
+        }
+
+        /* **** EXIT STEPS **** */
+        for (int nExit = 1; nExit < 100; nExit = nExit + 4) {
+            Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExit, maxAttackSteps,
+                    maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents, pMinAttackSteps);
+            graph.sample();
+            int real_size = graph.size();
+            float mean_parents = graph.meanParentNbr();
+            float mean_children = graph.meanChildrenNbr();
+            int min_children = graph.minChildrenNbr();
+            int max_children = graph.maxChildrenNbr();
+            int min_parents = graph.minParentsNbr();
+            int max_parents = graph.maxParentsNbr();
+            tm = TimeWatch.start();
+            graph.reduce();
+            double reduce_time = tm.time(TimeUnit.MILLISECONDS);
+            cvsFileWriter.newRecord(nExitSteps, nExit, real_size, maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents,
+                    pMinAttackSteps, graph.size(), reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
+                    mean_parents);
+        }
+
+        /* **** Graph Size **** */
+        for (int maxSteps = 100; maxSteps < 6000; maxSteps = maxSteps * 2) {
+            Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxSteps,
+                    maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents, pMinAttackSteps);
+            graph.sample();
+            int real_size = graph.size();
+            float mean_parents = graph.meanParentNbr();
+            float mean_children = graph.meanChildrenNbr();
+            int min_children = graph.minChildrenNbr();
+            int max_children = graph.maxChildrenNbr();
+            int min_parents = graph.minParentsNbr();
+            int max_parents = graph.maxParentsNbr();
+            tm = TimeWatch.start();
+            graph.reduce();
+            double reduce_time = tm.time(TimeUnit.MILLISECONDS);
+            cvsFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents,
+                    pMinAttackSteps, graph.size(), reduce_time,min_children,max_children,mean_children,min_parents,max_parents,
+                    mean_parents);
+        }
+
+        /* **** NbrChildren **** */
+        for (double probaChild = 0.1; probaChild <= 1.0; probaChild = probaChild + .4) {
+            for (int nbChildren = 1; nbChildren < 15 ; nbChildren++) {
+                Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxAttackSteps,
+                        nbChildren, probaChild, maxOldParents, pBinomialOldParents, pMinAttackSteps);
+                graph.sample();
+                int real_size = graph.size();
+                float mean_parents = graph.meanParentNbr();
+                float mean_children = graph.meanChildrenNbr();
+                int min_children = graph.minChildrenNbr();
+                int max_children = graph.maxChildrenNbr();
+                int min_parents = graph.minParentsNbr();
+                int max_parents = graph.maxParentsNbr();
+                tm = TimeWatch.start();
+                graph.reduce();
+                double reduce_time = tm.time(TimeUnit.MILLISECONDS);
+                cvsFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, nbChildren, probaChild, maxOldParents, pBinomialOldParents,
+                        pMinAttackSteps, graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
+                        mean_parents);
+            }
+        }
+
+        /* **** NbrParents **** */
+        for (double probaParent = 0.1; probaParent <= 1.0; probaParent = probaParent + .4) {
+            for (int nbParentsn = 1; nbParentsn < 15 ; nbParentsn++) {
+                Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxAttackSteps,
+                        maxChildren, pBinomialChildren, nbParentsn, probaParent, pMinAttackSteps);
+                graph.sample();
+                int real_size = graph.size();
+                float mean_parents = graph.meanParentNbr();
+                float mean_children = graph.meanChildrenNbr();
+                int min_children = graph.minChildrenNbr();
+                int max_children = graph.maxChildrenNbr();
+                int min_parents = graph.minParentsNbr();
+                int max_parents = graph.maxParentsNbr();
+                tm = TimeWatch.start();
+                graph.reduce();
+                double reduce_time = tm.time(TimeUnit.MILLISECONDS);
+                cvsFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, maxChildren, pBinomialChildren, nbParentsn, probaParent,
+                        pMinAttackSteps, graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
+                        mean_parents);
+            }
+        }
+
+        /* **** OR/AND ratio **** */
+        for (double probaParent = 0.0; probaParent <= 1.0; probaParent = probaParent + .5) {
+            for (int nbParentsn = 1; nbParentsn < 15 ; nbParentsn++) {
+                Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxAttackSteps,
+                        maxChildren, pBinomialChildren, nbParentsn, probaParent, pMinAttackSteps);
+                graph.sample();
+                int real_size = graph.size();
+                float mean_parents = graph.meanParentNbr();
+                float mean_children = graph.meanChildrenNbr();
+                int min_children = graph.minChildrenNbr();
+                int max_children = graph.maxChildrenNbr();
+                int min_parents = graph.minParentsNbr();
+                int max_parents = graph.maxParentsNbr();
+                tm = TimeWatch.start();
+                graph.reduce();
+                double reduce_time = tm.time(TimeUnit.MILLISECONDS);
+                cvsFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, maxChildren, pBinomialChildren, nbParentsn, probaParent,
+                        pMinAttackSteps, graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
+                        mean_parents);
+            }
+        }
+
     }
 
     public static void main4(String args[]) {

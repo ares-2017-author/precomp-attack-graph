@@ -5,10 +5,10 @@ import java.util.*;
 import computation.GraphComputer;
 import computation.GraphOrdinalComputer;
 import computation.GraphTransformer;
+import datatypes.Order;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 
 import support.OutputUtils;
-import datatypes.Order;
 
 public class Graph implements Observer {
 
@@ -193,6 +193,54 @@ public class Graph implements Observer {
       subGraph.attackSteps.stream().forEach(as -> addAttackStep(as));
       hardReset();
    }
+
+   /* For statistics */
+
+   public float meanChildrenNbr() {
+      int childrenCount = 0;
+      for(AttackStep as : attackStepsAsSet()) childrenCount += as.getChildren().size();
+      return childrenCount / attackStepsAsSet().size();
+   }
+
+   public int maxChildrenNbr() {
+      int maxChildren = 0;
+      for(AttackStep as : attackStepsAsSet())
+         if (as.getChildren().size() > maxChildren)
+            maxChildren = as.getChildren().size();
+      return maxChildren;
+   }
+
+   public int minChildrenNbr() {
+      int minChildren = Integer.MAX_VALUE;
+      for(AttackStep as : attackStepsAsSet())
+         if (as.getChildren().size() < minChildren)
+            minChildren = as.getChildren().size();
+      return minChildren;
+   }
+
+   public float meanParentNbr() {
+      int parentsCount = 0;
+      for(AttackStep as : attackStepsAsSet()) parentsCount += as.getExpectedParents().size();
+      return parentsCount / attackStepsAsSet().size();
+   }
+
+   public int maxParentsNbr() {
+      int maxParents = 0;
+      for(AttackStep as : attackStepsAsSet())
+         if (as.getExpectedParents().size() > maxParents)
+            maxParents = as.getExpectedParents().size();
+      return maxParents;
+   }
+
+   public int minParentsNbr() {
+      int minParents = Integer.MAX_VALUE;
+      for(AttackStep as : attackStepsAsSet())
+         if (as.getExpectedParents().size() < minParents)
+            minParents = as.getExpectedParents().size();
+      return minParents;
+   }
+
+   /* **************************************** */
 
    public int size() {
       return attackStepsAsSet().size();
