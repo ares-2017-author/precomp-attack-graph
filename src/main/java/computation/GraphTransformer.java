@@ -1,9 +1,10 @@
-package components;
+package computation;
 
-import attackGraph.AttackStep;
-import attackGraph.AttackStepMax;
-import attackGraph.AttackStepMin;
-import attackGraph.Order;
+import attackgraph.AttackStep;
+import attackgraph.AttackStepMax;
+import attackgraph.AttackStepMin;
+import attackgraph.Graph;
+import datatypes.Order;
 import support.OutputUtils;
 import support.Tarjan;
 import support.TimeWatch;
@@ -12,16 +13,16 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static support.OrdinalOperations.plus;
+import static computation.OrdinalOperations.plus;
 
-class GraphTransformer {
+public class GraphTransformer {
 
     public void reduce(Graph graph) {
         OutputUtils.printVerbose("Reducing Graph "+graph.getOwnerComponentName()+" ("+graph.attackStepsAsSet().size()+" asteps)...\n");
         TimeWatch tm = TimeWatch.start();
         graph.hardReset();
         deleteAllRedundantEdges(graph);
-        OutputUtils.printTerseVerbose("deleteAllRedundantEdges: " + (tm.time(TimeUnit.MILLISECONDS)) + " ms.");;
+        OutputUtils.printTerseVerbose("deleteAllRedundantEdges: " + (tm.time(TimeUnit.MILLISECONDS)) + " ms.");
         deleteUnproductiveLoops(graph);
         retainOnlyExitStepAncestors(graph);
         retainOnlyEntryStepProgeny(graph);
@@ -195,9 +196,11 @@ class GraphTransformer {
             // SCC does not contain the exitStep itself. Removed in Tarjan
             Set<AttackStep> sccOfExStep = tarjan.getSccOf(exitStep);
             OutputUtils.printVeryVerbose("---------------------\nLoops from "+exitStep.getName()+".\n---------------------");
-            if (!sccOfExStep.isEmpty() && sccOfExStep.stream()
+            if (!sccOfExStep.isEmpty()
+                    /*&& sccOfExStep.stream()
                     .filter(as -> as.getOrder().equals(Order.ENTRYSTEP) || as.getOrder().equals(Order.EXITSTEP))
-                    .collect(Collectors.toList()).isEmpty()) {
+                    .collect(Collectors.toList()).isEmpty()*/
+                    ) {
                 toBeDeleted.addAll(sccOfExStep);
                 graph.getExitSteps().stream().filter(es -> !es.equals(exitStep))
                         .forEach(es -> toBePreserved.addAll(exitStep.descendantsTo(es)));

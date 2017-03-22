@@ -1,5 +1,6 @@
-package attackGraph;
+package attackgraph;
 
+import datatypes.Order;
 import datatypes.OrdinalTtcValue;
 import org.apache.commons.math3.distribution.ConstantRealDistribution;
 

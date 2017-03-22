@@ -1,11 +1,12 @@
-package components;
+package computation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import attackGraph.*;
+import attackgraph.*;
 import com.google.common.collect.Sets;
+import datatypes.Order;
 import datatypes.OrdinalTtcValue;
 import org.apache.commons.math3.distribution.ConstantRealDistribution;
 import org.junit.After;

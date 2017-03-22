@@ -1,9 +1,9 @@
-package components;
+package computation;
 
-import attackGraph.*;
+import attackgraph.*;
+import datatypes.Order;
 import org.apache.commons.math3.distribution.ConstantRealDistribution;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import support.TestUtils;

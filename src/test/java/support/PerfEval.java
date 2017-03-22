@@ -1,7 +1,7 @@
 package support;
 
 import com.github.jesg.dither.Dither;
-import components.Graph;
+import attackgraph.Graph;
 
 import java.util.concurrent.TimeUnit;
 
@@ -87,15 +87,15 @@ public class PerfEval {
                         25}, // 1. Number of Exit Steps
                 new Object[] { 50, 100,200,500,750,1000}, //2. Total number of attack steps
                 new Object[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}, // 3. Max Number of Children
-                new Object[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}, // 4. Binomial probability of children for each node
+                new Object[] { 0.1, 0.5, 1.0}, // 4. Binomial probability of children for each node
                  new Object[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}, // 5. Max Number of parents
-                new Object[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}, // 6. Binomial probability of parent for each node
+                new Object[] { 0.1, 0.5, 1.0}, // 6. Binomial probability of parent for each node
                 new Object[] { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 }} // 7. Proportion of OR nodes
         );
     }
 }
 /*
-attackGraph.**
-components.**
+attackgraph.**
+computation.**
 support.**
  */

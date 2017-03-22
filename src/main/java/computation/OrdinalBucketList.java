@@ -1,8 +1,9 @@
-package attackGraph;
+package computation;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import attackgraph.AttackStep;
 import support.OutputUtils;
 // TODO Refactor OrdinalBucketList by extending BucketList?
 // but there seems to be some variations in their respective code

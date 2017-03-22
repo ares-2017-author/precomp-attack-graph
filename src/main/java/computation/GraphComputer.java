@@ -1,7 +1,7 @@
-package components;
+package computation;
 
 
-import attackGraph.*;
+import attackgraph.*;
 import datatypes.MaxNodesCalculationStrategies;
 import support.Config;
 import support.OutputUtils;

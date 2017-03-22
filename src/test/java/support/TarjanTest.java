@@ -1,9 +1,9 @@
 package support;
 
-import attackGraph.AttackStep;
-import attackGraph.AttackStepMin;
-import attackGraph.Order;
-import components.Graph;
+import attackgraph.AttackStep;
+import attackgraph.AttackStepMin;
+import datatypes.Order;
+import attackgraph.Graph;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 

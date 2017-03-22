@@ -1,13 +1,12 @@
 package support;
 
-import attackGraph.AttackStep;
-import attackGraph.AttackStepMax;
-import attackGraph.Defense;
-import components.Graph;
+import attackgraph.AttackStep;
+import attackgraph.AttackStepMax;
+import attackgraph.Defense;
+import attackgraph.Graph;
 
 import java.text.DecimalFormat;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

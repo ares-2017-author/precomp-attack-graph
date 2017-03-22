@@ -1,9 +1,10 @@
-package attackGraph;
+package attackgraph;
 
+import datatypes.Order;
 import datatypes.OrdinalTtcValue;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 
-import support.OrdinalOperations;
+import computation.OrdinalOperations;
 import support.OutputUtils;
 
 import java.util.Set;

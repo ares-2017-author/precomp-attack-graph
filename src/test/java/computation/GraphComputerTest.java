@@ -1,7 +1,8 @@
-package components;
+package computation;
 
 
-import attackGraph.AttackStep;
+import attackgraph.AttackStep;
+import attackgraph.Graph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

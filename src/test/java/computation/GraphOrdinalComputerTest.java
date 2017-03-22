@@ -1,7 +1,8 @@
-package components;
+package computation;
 
 
-import attackGraph.*;
+import attackgraph.*;
+import datatypes.Order;
 import datatypes.OrdinalTtcValue;
 import org.apache.commons.math3.distribution.ConstantRealDistribution;
 import org.junit.After;

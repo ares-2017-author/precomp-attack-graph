@@ -1,10 +1,10 @@
 package support;
 
 
-import attackGraph.AttackStep;
-import attackGraph.AttackStepMin;
-import attackGraph.Order;
-import components.Graph;
+import attackgraph.AttackStep;
+import attackgraph.AttackStepMin;
+import datatypes.Order;
+import attackgraph.Graph;
 import org.apache.commons.math3.distribution.ConstantRealDistribution;
 import org.junit.Test;
 

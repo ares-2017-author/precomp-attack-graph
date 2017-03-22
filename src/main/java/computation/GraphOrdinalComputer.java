@@ -1,8 +1,7 @@
-package components;
+package computation;
 
-import attackGraph.*;
+import attackgraph.*;
 import datatypes.OrdinalTtcValue;
-import support.OrdinalOperations;
 import support.OutputUtils;
 
 public class GraphOrdinalComputer {

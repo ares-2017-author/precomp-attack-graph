@@ -1,13 +1,8 @@
-package attackGraph;
+package attackgraph;
 
-
-import datatypes.OrdinalTtcValue;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class OrdinalTtcTest {
 

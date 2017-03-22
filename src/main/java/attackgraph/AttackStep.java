@@ -1,9 +1,11 @@
-package attackGraph;
+package attackgraph;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
+import computation.Bucket;
+import datatypes.Order;
 import datatypes.OrdinalTtcValue;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 
@@ -16,7 +18,7 @@ public abstract class AttackStep extends Observable {
    private int                      randomSeed;
    private String                   name;
    private Set<Integer>             idSet                   = new HashSet<>();
-   private Order                    order;
+   private Order order;
 
    private boolean                  hasUpdatedItsChildren   = false;
    private double                   ttc;
@@ -29,7 +31,7 @@ public abstract class AttackStep extends Observable {
    private OrdinalTtcValue          ordinalLocalTtc;
    private Set<AbstractRealDistribution> localTtcDistributions = new HashSet<>();
 
-   private Bucket                   bucket_;
+   private Bucket bucket_;
    private Set<AttackStep>          children                = new HashSet<>();
 
    private Set<AttackStep>          remainingParents;

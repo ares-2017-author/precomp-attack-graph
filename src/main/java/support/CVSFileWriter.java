@@ -3,8 +3,7 @@ package support;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,9 +36,18 @@ public class CVSFileWriter {
 
     public void reset(String fileName) {
         try {
-            fileWriter = new FileWriter(fileName);
+            boolean append = false;
+            File csvFile = new File(fileName);
+            if (csvFile.exists())
+            fileWriter = new FileWriter(fileName, append);
             csvFilePrinter = new CSVPrinter(fileWriter, CSV_FILE_FORMAT);
-            csvFilePrinter.printRecord(FILE_HEADER);
+            if (append){
+                BufferedReader br = new BufferedReader(new FileReader(csvFile));
+                String headers = br.readLine();
+                if (headers.isEmpty() || !headers.contains("After Reduction,Execution time (ms),Number of EntrySteps,"))
+                    csvFilePrinter.printRecord(FILE_HEADER);
+            } else csvFilePrinter.printRecord(FILE_HEADER);
+            //TODO Read CSV, retrieve records, and put them to the exclusion list for IPOG
         } catch (IOException e) {
             e.printStackTrace();
         }

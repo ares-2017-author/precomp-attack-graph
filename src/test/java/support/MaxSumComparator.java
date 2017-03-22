@@ -1,10 +1,10 @@
 package support;
 
-import attackGraph.AttackStep;
-import attackGraph.AttackStepMax;
-import attackGraph.AttackStepMin;
-import components.Graph;
-import components.GraphComputer;
+import attackgraph.AttackStep;
+import attackgraph.AttackStepMax;
+import attackgraph.AttackStepMin;
+import attackgraph.Graph;
+import computation.GraphComputer;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.junit.Test;

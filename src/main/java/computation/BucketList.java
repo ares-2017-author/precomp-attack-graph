@@ -1,4 +1,6 @@
-package attackGraph;
+package computation;
+
+import attackgraph.AttackStep;
 
 import java.util.ArrayList;
 import java.util.List;

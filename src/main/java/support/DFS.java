@@ -1,6 +1,6 @@
 package support;
 
-import attackGraph.AttackStep;
+import attackgraph.AttackStep;
 
 import java.util.*;
 

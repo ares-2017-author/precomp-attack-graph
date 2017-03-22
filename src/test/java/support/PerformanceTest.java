@@ -1,20 +1,13 @@
 package support;
 
-import attackGraph.AttackStep;
-import components.Graph;
+import attackgraph.AttackStep;
+import attackgraph.Graph;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import support.OutputUtils;
-import support.TestUtils;
-import support.TimeWatch;
 
-import java.io.IOException;
 import java.lang.*;
-import java.lang.System;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
@@ -360,7 +353,6 @@ public class PerformanceTest {
         OutputUtils.printVerbose("Computation time once reduced: " + computation_time_reduced + " ms.");
     }
 
-    @Ignore
     @Test
     public void testMC800b() throws InterruptedException {
         OutputUtils.verboseOff();

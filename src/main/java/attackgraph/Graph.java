@@ -1,32 +1,27 @@
-package components;
+package attackgraph;
 
 import java.util.*;
 
+import computation.GraphComputer;
+import computation.GraphOrdinalComputer;
+import computation.GraphTransformer;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 
 import support.OutputUtils;
-import attackGraph.AttackStep;
-import attackGraph.AttackStepMax;
-import attackGraph.AttackStepMin;
-import attackGraph.Defense;
-import attackGraph.Order;
+import datatypes.Order;
 
 public class Graph implements Observer {
 
    private List<AttackStep>         attackSteps             = new ArrayList<>();
 
-   private GraphTransformer         graphTransformer        = new GraphTransformer();
-   private GraphComputer            graphComputer           = new GraphComputer();
-   private GraphOrdinalComputer     graphOrdinalComputer    = new GraphOrdinalComputer();
+   private GraphTransformer graphTransformer        = new GraphTransformer();
+   private GraphComputer graphComputer           = new GraphComputer();
+   private GraphOrdinalComputer graphOrdinalComputer    = new GraphOrdinalComputer();
    private static int               randomSeed              = 2;
    public static Random             rand                    = new Random(randomSeed);
    private String                   ownerComponent;
    private boolean                  upToDate                = false;
    private AttackStep               source;
-
-   public Graph(Component ownerComponent) {
-      this.ownerComponent = ownerComponent.getName();
-   }
 
    public Graph(String name) {this.ownerComponent = name;}
 
@@ -70,7 +65,7 @@ public class Graph implements Observer {
    }
 
    // hardReset() also reseeds the PRNG.
-   protected void hardReset() {
+   public void hardReset() {
       attackSteps.forEach(AttackStep::hardReset);
    }
 
