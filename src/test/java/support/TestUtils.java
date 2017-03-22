@@ -23,8 +23,6 @@ public class TestUtils {
                                             double pMinAttackSteps) {
 
         Graph graph = new Graph("LooseGraph");
-        BinomialDistribution nParentDistribution = new BinomialDistribution(4, 0.5);
-        BinomialDistribution nChildrenDistribution = new BinomialDistribution(4, 0.5);
         List<AttackStep> frontier = new ArrayList<>();
         int nAttackSteps = 0;
         AttackStep child;
@@ -32,8 +30,6 @@ public class TestUtils {
         BinomialDistribution parentDistribution = new BinomialDistribution(maxOldParents, pBinomialOldParents);
         AttackStep exitStep;
 
-        nParentDistribution.reseedRandomGenerator(randomSeed);
-        nChildrenDistribution.reseedRandomGenerator(randomSeed);
         childrenDistribution.reseedRandomGenerator(randomSeed);
         parentDistribution.reseedRandomGenerator(randomSeed);
         rand.setSeed(randomSeed);

@@ -20,6 +20,7 @@ public class CSVFileWriter {
     //CSV file header
     private static final Object[] FILE_HEADER = {"id", "Inital Number of AttackSteps",
             "Number of AttackSteps After Reduction", "Reduction Ratio", "Execution time (ms)", "Number of EntrySteps", "Number of ExitSteps",
+            "Graph Density",
             "Maximum Nbr of Children per AttackStep", "Proportion of BinomialChildren", "Number of maxOldParents",
             "Proportion of BinomialOldParents", "Proportion of AttackStep OR", "Lowest Nbr of Children", "Highest Nbr of Children",
             "Mean Nbr of Children", "Lowest Nbr of Parents", "Highest Nbr of Parents", "Mean Nbr of Parents"
@@ -57,18 +58,19 @@ public class CSVFileWriter {
         }
     }
 
-    public void newRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, double reduction_ratio, int maxChildren,
+    public void newRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int maxChildren,
                           double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
-                          double pMinAttackSteps, int nbAttackStepsReduced, double execTime, int minChildrenNb,
+                          double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
                           int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
         List<String> record = new LinkedList<>();
         record.add(Integer.toString(idCount));
         record.add(Integer.toString(nbAttackStepsUnreduced));
         record.add(Integer.toString(nbAttackStepsReduced));
-        record.add(Double.toString(reduction_ratio));
+        record.add(Float.toString(reduction_ratio));
         record.add(Double.toString(execTime));
         record.add(Integer.toString(nEntrySteps));
         record.add(Integer.toString(nExitSteps));
+        record.add(Float.toString(graphDensity));
         record.add(Integer.toString(maxChildren));
         record.add(Double.toString(pBinomialChildren));
         record.add(Integer.toString(maxOldParents));

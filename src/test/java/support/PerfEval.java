@@ -61,10 +61,10 @@ public class PerfEval {
             tm = TimeWatch.start();
             graph.reduce();
             double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-            double reduction_ratio = real_size / graph.size();
+            float reduction_ratio = ((float) real_size / graph.size());
             CSVFileWriter.newRecord((int)testData[0], (int)testData[1], real_size,
                     reduction_ratio, (int)testData[3], (double)testData[4], (int)testData[5], (double)testData[6], (double)testData[7],
-                    graph.size(),reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
+                    graph.getGraphDensity(), graph.size(),reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
                     mean_parents);
             cpt++;
         }
@@ -72,15 +72,15 @@ public class PerfEval {
     }
 
     /* Individual experiments */
-    public static void main5(String args[]) {
+    public static void main(String args[]) {
         CSVFileWriter CSVFileWriter = new CSVFileWriter("graph-experiments-indiv.csv");
         TimeWatch tm;
         int nEntrySteps = 3;
         int nExitSteps = 4;
         int maxAttackSteps = 500;
-        int maxChildren = 7;
-        double pBinomialChildren = 0.6;
-        int maxOldParents = 6;
+        int maxChildren = 6;
+        double pBinomialChildren = 0.35;
+        int maxOldParents = 2;
         double pBinomialOldParents = 0.5;
         double pMinAttackSteps = 0.65;
 
@@ -99,9 +99,9 @@ public class PerfEval {
             tm = TimeWatch.start();
             graph.reduce();
             double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-            double reduction_ratio = real_size / graph.size();
+            float reduction_ratio = ((float) real_size / graph.size());
             CSVFileWriter.newRecord(nEntry, nExitSteps, real_size, reduction_ratio, maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents,
-                    pMinAttackSteps, graph.size(), reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
+                    pMinAttackSteps, graph.getGraphDensity(), graph.size(), reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
                     mean_parents);
         }
 
@@ -120,9 +120,9 @@ public class PerfEval {
             tm = TimeWatch.start();
             graph.reduce();
             double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-            double reduction_ratio = real_size / graph.size();
+            float reduction_ratio = ((float) real_size / graph.size());
             CSVFileWriter.newRecord(nExitSteps, nExit, real_size, reduction_ratio, maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents,
-                    pMinAttackSteps, graph.size(), reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
+                    pMinAttackSteps, graph.getGraphDensity(), graph.size(), reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
                     mean_parents);
         }
 
@@ -141,9 +141,9 @@ public class PerfEval {
             tm = TimeWatch.start();
             graph.reduce();
             double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-            double reduction_ratio = real_size / graph.size();
+            float reduction_ratio = ((float) real_size / graph.size());
             CSVFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents,
-                    pMinAttackSteps, graph.size(), reduce_time,min_children,max_children,mean_children,min_parents,max_parents,
+                    pMinAttackSteps, graph.getGraphDensity(), graph.size(), reduce_time,min_children,max_children,mean_children,min_parents,max_parents,
                     mean_parents);
         }
 
@@ -163,9 +163,9 @@ public class PerfEval {
                 tm = TimeWatch.start();
                 graph.reduce();
                 double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-                double reduction_ratio = real_size / graph.size();
+                float reduction_ratio = ((float) real_size / graph.size());
                 CSVFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, nbChildren, probaChild, maxOldParents, pBinomialOldParents,
-                        pMinAttackSteps, graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
+                        pMinAttackSteps, graph.getGraphDensity(), graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
                         mean_parents);
             }
         }
@@ -186,9 +186,9 @@ public class PerfEval {
                 tm = TimeWatch.start();
                 graph.reduce();
                 double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-                double reduction_ratio = real_size / graph.size();
+                float reduction_ratio = ((float) real_size / graph.size());
                 CSVFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, maxChildren, pBinomialChildren, nbParentsn, probaParent,
-                        pMinAttackSteps, graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
+                        pMinAttackSteps, graph.getGraphDensity(), graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
                         mean_parents);
             }
         }
@@ -208,47 +208,48 @@ public class PerfEval {
             tm = TimeWatch.start();
             graph.reduce();
             double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-            double reduction_ratio = real_size / graph.size();
+            float reduction_ratio = ((float) real_size / graph.size());
             CSVFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents,
-                    orAndRatio, graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
+                    orAndRatio, graph.getGraphDensity(), graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
                     mean_parents);
         }
 
     }
 
     /* Individual Size */
-    public static void main(String args[]) {
-        CSVFileWriter CSVFileWriter = new CSVFileWriter("graph-experiments-entry.csv");
+    public static void main8(String args[]) {
+        CSVFileWriter CSVFileWriter = new CSVFileWriter("graph-experiments-children.csv");
         TimeWatch tm;
         int nEntrySteps = 3;
         int nExitSteps = 4;
         int maxAttackSteps = 500;
-        int maxChildren = 3;
-        double pBinomialChildren = 1;
-        int maxOldParents = 3;
-        double pBinomialOldParents = 1;
+        int maxChildren = 7;
+        double pBinomialChildren = 0.6;
+        int maxOldParents = 1;
+        double pBinomialOldParents = 0.4;
         double pMinAttackSteps = 0.65;
 
-        /* **** Graph Size **** */
-        /* **** ENTRY STEPS **** */
-        for (int nEntry = 1; nEntry < 100; nEntry = nEntry + 4) {
-            Graph graph = TestUtils.generateRandomGraph(nEntry, nExitSteps, maxAttackSteps,
-                    maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents, pMinAttackSteps);
-            graph.sample();
-            int real_size = graph.size();
-            float mean_parents = graph.meanParentNbr();
-            float mean_children = graph.meanChildrenNbr();
-            int min_children = graph.minChildrenNbr();
-            int max_children = graph.maxChildrenNbr();
-            int min_parents = graph.minParentsNbr();
-            int max_parents = graph.maxParentsNbr();
-            tm = TimeWatch.start();
-            graph.reduce();
-            double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-            double reduction_ratio = real_size / graph.size();
-            CSVFileWriter.newRecord(nEntry, nExitSteps, real_size, reduction_ratio, maxChildren, pBinomialChildren, maxOldParents, pBinomialOldParents,
-                    pMinAttackSteps, graph.size(), reduce_time, min_children,max_children,mean_children,min_parents,max_parents,
-                    mean_parents);
+        /* **** NbrChildren **** */
+        for (double probaChild = 0.1; probaChild <= 1.0; probaChild = probaChild + .4) {
+            for (int nbChildren = 1; nbChildren < 15 ; nbChildren++) {
+                Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxAttackSteps,
+                        nbChildren, probaChild, maxOldParents, probaChild, pMinAttackSteps);
+                graph.sample();
+                int real_size = graph.size();
+                float mean_parents = graph.meanParentNbr();
+                float mean_children = graph.meanChildrenNbr();
+                int min_children = graph.minChildrenNbr();
+                int max_children = graph.maxChildrenNbr();
+                int min_parents = graph.minParentsNbr();
+                int max_parents = graph.maxParentsNbr();
+                tm = TimeWatch.start();
+                graph.reduce();
+                double reduce_time = tm.time(TimeUnit.MILLISECONDS);
+                float reduction_ratio = ((float) real_size / graph.size());
+                CSVFileWriter.newRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, nbChildren, probaChild, maxOldParents, pBinomialOldParents,
+                        pMinAttackSteps, graph.getGraphDensity(), graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
+                        mean_parents);
+            }
         }
 
     }

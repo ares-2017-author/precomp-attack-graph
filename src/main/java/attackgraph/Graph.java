@@ -199,7 +199,7 @@ public class Graph implements Observer {
    public float meanChildrenNbr() {
       int childrenCount = 0;
       for(AttackStep as : attackStepsAsSet()) childrenCount += as.getChildren().size();
-      return childrenCount / attackStepsAsSet().size();
+      return ((float)childrenCount / attackStepsAsSet().size());
    }
 
    public int maxChildrenNbr() {
@@ -207,6 +207,23 @@ public class Graph implements Observer {
       for(AttackStep as : attackStepsAsSet())
          if (as.getChildren().size() > maxChildren)
             maxChildren = as.getChildren().size();
+      return maxChildren;
+   }
+
+   /**
+    * See formula for
+    * @return
+     */
+   public float getGraphDensity() {
+      int V = attackStepsAsSet().size();
+      int E = getTotalNbrOfChildren();
+      return ((float)E/ (V*(V-1)));
+   }
+
+   public int getTotalNbrOfChildren() {
+      int maxChildren = 0;
+      for(AttackStep as : attackStepsAsSet())
+            maxChildren += as.getChildren().size();
       return maxChildren;
    }
 
@@ -221,7 +238,7 @@ public class Graph implements Observer {
    public float meanParentNbr() {
       int parentsCount = 0;
       for(AttackStep as : attackStepsAsSet()) parentsCount += as.getExpectedParents().size();
-      return parentsCount / attackStepsAsSet().size();
+      return ((float)parentsCount / attackStepsAsSet().size());
    }
 
    public int maxParentsNbr() {
