@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
  * Source from https://examples.javacodegeeks.com/core-java/apache/commons/csv-commons/writeread-csv-files-with-apache-commons-csv-example/
  */
 
-public class CVSFileWriter {
+public class CSVFileWriter {
     //Delimiter used in CSV file
     private static final String NEW_LINE_SEPARATOR = "\n";
 
     //CSV file header
     private static final Object[] FILE_HEADER = {"id", "Inital Number of AttackSteps",
-            "Number of AttackSteps After Reduction", "Execution time (ms)", "Number of EntrySteps", "Number of ExitSteps",
+            "Number of AttackSteps After Reduction", "Reduction Ratio", "Execution time (ms)", "Number of EntrySteps", "Number of ExitSteps",
             "Maximum Nbr of Children per AttackStep", "Proportion of BinomialChildren", "Number of maxOldParents",
             "Proportion of BinomialOldParents", "Proportion of AttackStep OR", "Lowest Nbr of Children", "Highest Nbr of Children",
             "Mean Nbr of Children", "Lowest Nbr of Parents", "Highest Nbr of Parents", "Mean Nbr of Parents"
@@ -32,7 +32,7 @@ public class CVSFileWriter {
     FileWriter fileWriter;
     CSVPrinter csvFilePrinter;
 
-    public CVSFileWriter(String fileName) {
+    public CSVFileWriter(String fileName) {
         reset(fileName);
     }
 
@@ -57,7 +57,7 @@ public class CVSFileWriter {
         }
     }
 
-    public void newRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, int maxChildren,
+    public void newRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, double reduction_ratio, int maxChildren,
                           double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
                           double pMinAttackSteps, int nbAttackStepsReduced, double execTime, int minChildrenNb,
                           int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
@@ -65,6 +65,7 @@ public class CVSFileWriter {
         record.add(Integer.toString(idCount));
         record.add(Integer.toString(nbAttackStepsUnreduced));
         record.add(Integer.toString(nbAttackStepsReduced));
+        record.add(Double.toString(reduction_ratio));
         record.add(Double.toString(execTime));
         record.add(Integer.toString(nEntrySteps));
         record.add(Integer.toString(nExitSteps));
