@@ -59,6 +59,7 @@ public class PerfEval {
             int real_size = graph.size();
             float mean_parents = graph.meanParentNbr();
             float mean_children = graph.meanChildrenNbr();
+            float graph_density = graph.getGraphDensity();
             int min_children = graph.minChildrenNbr();
             int max_children = graph.maxChildrenNbr();
             int min_parents = graph.minParentsNbr();
@@ -69,7 +70,7 @@ public class PerfEval {
             float reduction_ratio = ((float) real_size / graph.size());
             csvFileWriter.printNewRecord((int) testData[0], (int) testData[1], real_size,
                     reduction_ratio, (int) testData[3], (double) testData[4], (int) testData[5], (double) testData[6], (double) testData[7],
-                    graph.getGraphDensity(), graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
+                    graph_density, graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
                     mean_parents);
             cpt.incrementAndGet();
         });
