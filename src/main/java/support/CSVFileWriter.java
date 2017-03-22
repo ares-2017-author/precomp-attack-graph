@@ -5,8 +5,10 @@ import org.apache.commons.csv.CSVPrinter;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -29,9 +31,10 @@ public class CSVFileWriter {
     //Create the CSVFormat object with "\n" as a record delimiter
     private static final CSVFormat CSV_FILE_FORMAT = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
 
-    private int idCount;
+    private AtomicInteger idCount;
     FileWriter fileWriter;
     CSVPrinter csvFilePrinter;
+    ArrayList<List<String>> records;
 
     public CSVFileWriter(String fileName) {
         reset(fileName);
@@ -42,10 +45,11 @@ public class CSVFileWriter {
             fileWriter = new FileWriter(fileName);
             csvFilePrinter = new CSVPrinter(fileWriter, CSV_FILE_FORMAT);
             csvFilePrinter.printRecord(FILE_HEADER);
+            records = new ArrayList<>();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        idCount = 1;
+        idCount = new AtomicInteger(1);
     }
 
     public void close() {
@@ -58,12 +62,23 @@ public class CSVFileWriter {
         }
     }
 
-    public void newRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int maxChildren,
-                          double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
-                          double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
-                          int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
+    public void addNewRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int maxChildren,
+                               double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
+                               double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
+                               int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
+        List<String> record = createNewRecord(nEntrySteps,nExitSteps,nbAttackStepsUnreduced,reduction_ratio,maxChildren,
+                pBinomialChildren,maxOldParents,pBinomialOldParents,pMinAttackSteps,graphDensity,nbAttackStepsReduced,
+                execTime,minChildrenNb,maxChildrenNb,meanChildrenNb,minParentsNb,maxParentsNb,meanParentsNb);
+        records.add(record);
+        idCount.incrementAndGet();
+    }
+
+    private List<String> createNewRecord (int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int maxChildren,
+                             double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
+                             double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
+                             int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
         List<String> record = new LinkedList<>();
-        record.add(Integer.toString(idCount));
+        record.add(Integer.toString(idCount.get()));
         record.add(Integer.toString(nbAttackStepsUnreduced));
         record.add(Integer.toString(nbAttackStepsReduced));
         record.add(Float.toString(reduction_ratio));
@@ -82,17 +97,37 @@ public class CSVFileWriter {
         record.add(Integer.toString(minParentsNb));
         record.add(Integer.toString(maxParentsNb));
         record.add(Float.toString(meanParentsNb));
-        if (idCount > 26) {
-            System.out.println(record.stream().collect(Collectors.joining("; ")));
-        }
+        System.out.println(record.stream().collect(Collectors.joining("; ")));
+        return record;
+    }
+
+    public void printNewRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int maxChildren,
+                               double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
+                               double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
+                               int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
+        List<String> record = createNewRecord(nEntrySteps,nExitSteps,nbAttackStepsUnreduced,reduction_ratio,maxChildren,
+                pBinomialChildren,maxOldParents,pBinomialOldParents,pMinAttackSteps,graphDensity,nbAttackStepsReduced,
+                execTime,minChildrenNb,maxChildrenNb,meanChildrenNb,minParentsNb,maxParentsNb,meanParentsNb);
+
         try {
             csvFilePrinter.printRecord(record);
-            System.out.println("CSV file was created successfully.");
+            System.out.println("CSV record was printed successfully.");
             csvFilePrinter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        idCount++;
+        idCount.incrementAndGet();
+    }
+
+    public void printAllRecords() {
+        for (List<String> record: records) {
+            try {
+                csvFilePrinter.printRecord(record);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("CSV file was populated successfully.");
+        }
     }
 
 
