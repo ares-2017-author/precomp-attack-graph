@@ -57,6 +57,23 @@ public class GraphTest {
    }
 
    @Test
+   public void testCreateAndComputeNewGraphWithBackCross() {
+      Graph graph = TestUtils.generateRandomGraph(2, 2, 100, 3, 0.7, 2, 0.3, 1, 0.15, 2, 0.45, 0.7);
+      graph.sample();
+      graph.zeroEntrySteps();
+      graph.compute();
+      OutputUtils.plotOn();
+      OutputUtils.printVerbose(Double.toString(graph.getExitSteps().get(0).getTtc()));
+      OutputUtils.mathematicaPlot(graph,2);
+      OutputUtils.plotOff();
+      graph.softReset();
+      graph.reduce();
+      OutputUtils.plotOn();
+      OutputUtils.printVerbose(Double.toString(graph.getExitSteps().get(0).getTtc()));
+      OutputUtils.mathematicaPlot(graph,2);
+   }
+
+   @Test
    public void testClone() {
       Graph original = TestUtils.generateRandomGraph(2, 2, 50, 3, 0.3, 3, 0.2, 0.5);
       original.zeroEntrySteps();

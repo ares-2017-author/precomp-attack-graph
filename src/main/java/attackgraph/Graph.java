@@ -234,7 +234,6 @@ public class Graph implements Observer {
             minChildren = as.getChildren().size();
       return minChildren;
    }
-
    public float meanParentNbr() {
       int parentsCount = 0;
       for(AttackStep as : attackStepsAsSet()) parentsCount += as.getExpectedParents().size();

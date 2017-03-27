@@ -23,8 +23,10 @@ public class CSVFileWriter {
     private static final Object[] FILE_HEADER = {"id", "Inital Number of AttackSteps",
             "Number of AttackSteps After Reduction", "Reduction Ratio", "Execution time (ms)", "Number of EntrySteps", "Number of ExitSteps",
             "Graph Density",
-            "Maximum Nbr of Children per AttackStep", "Proportion of BinomialChildren", "Number of maxOldParents",
-            "Proportion of BinomialOldParents", "Proportion of AttackStep OR", "Lowest Nbr of Children", "Highest Nbr of Children",
+            "N binomial Children", "P Binomial Children", "N Binomial Forward Edges",
+            "P Binomial Forward Edges", "N Binomial Back Edges",
+            "P Binomial Back Edges", "N Binomial Cross Edges",
+            "P Binomial Cross Edges", "Proportion of AttackStep OR", "Lowest Nbr of Children", "Highest Nbr of Children",
             "Mean Nbr of Children", "Lowest Nbr of Parents", "Highest Nbr of Parents", "Mean Nbr of Parents"
     };
 
@@ -62,19 +64,20 @@ public class CSVFileWriter {
         }
     }
 
-    public void addNewRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int maxChildren,
-                               double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
-                               double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
+    public void addNewRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int nBinomialChildren,
+                             double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges,
+                             int nBinomialBackEdges, double pBinomialBackEdges,  int nBinomialCrossEdges, double pBinomialCrossEdges, double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
                                int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
-        List<String> record = createNewRecord(nEntrySteps,nExitSteps,nbAttackStepsUnreduced,reduction_ratio,maxChildren,
-                pBinomialChildren,maxOldParents,pBinomialOldParents,pMinAttackSteps,graphDensity,nbAttackStepsReduced,
+        List<String> record = createNewRecord(nEntrySteps,nExitSteps,nbAttackStepsUnreduced,reduction_ratio,nBinomialChildren,
+                pBinomialChildren,nBinomialForwardEdges,pBinomialForwardEdges, nBinomialBackEdges, pBinomialBackEdges,nBinomialCrossEdges,pBinomialCrossEdges,pMinAttackSteps,graphDensity,nbAttackStepsReduced,
                 execTime,minChildrenNb,maxChildrenNb,meanChildrenNb,minParentsNb,maxParentsNb,meanParentsNb);
         records.add(record);
         idCount.incrementAndGet();
     }
 
-    private List<String> createNewRecord (int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int maxChildren,
-                             double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
+    private List<String> createNewRecord (int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int nBinomialChildren,
+                             double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges,
+                             int nBinomialBackEdges, double pBinomialBackEdges,  int nBinomialCrossEdges, double pBinomialCrossEdges,
                              double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
                              int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
         List<String> record = new LinkedList<>();
@@ -86,10 +89,14 @@ public class CSVFileWriter {
         record.add(Integer.toString(nEntrySteps));
         record.add(Integer.toString(nExitSteps));
         record.add(Float.toString(graphDensity));
-        record.add(Integer.toString(maxChildren));
+        record.add(Integer.toString(nBinomialChildren));
         record.add(Double.toString(pBinomialChildren));
-        record.add(Integer.toString(maxOldParents));
-        record.add(Double.toString(pBinomialOldParents));
+        record.add(Integer.toString(nBinomialForwardEdges));
+        record.add(Double.toString(pBinomialForwardEdges));
+        record.add(Integer.toString(nBinomialBackEdges));
+        record.add(Double.toString(pBinomialBackEdges));
+        record.add(Integer.toString(nBinomialCrossEdges));
+        record.add(Double.toString(pBinomialCrossEdges));
         record.add(Double.toString(pMinAttackSteps));
         record.add(Integer.toString(minChildrenNb));
         record.add(Integer.toString(maxChildrenNb));
@@ -101,12 +108,13 @@ public class CSVFileWriter {
         return record;
     }
 
-    public void printNewRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int maxChildren,
-                               double pBinomialChildren, int maxOldParents, double pBinomialOldParents,
+    public void printNewRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int nBinomialChildren,
+                               double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges,
+                               int nBinomialBackEdges, double pBinomialBackEdges,  int nBinomialCrossEdges, double pBinomialCrossEdges,
                                double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
                                int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
-        List<String> record = createNewRecord(nEntrySteps,nExitSteps,nbAttackStepsUnreduced,reduction_ratio,maxChildren,
-                pBinomialChildren,maxOldParents,pBinomialOldParents,pMinAttackSteps,graphDensity,nbAttackStepsReduced,
+        List<String> record = createNewRecord(nEntrySteps,nExitSteps,nbAttackStepsUnreduced,reduction_ratio,nBinomialChildren,
+                pBinomialChildren,nBinomialForwardEdges,pBinomialForwardEdges, nBinomialBackEdges, pBinomialBackEdges,nBinomialCrossEdges,pBinomialCrossEdges,pMinAttackSteps,graphDensity,nbAttackStepsReduced,
                 execTime,minChildrenNb,maxChildrenNb,meanChildrenNb,minParentsNb,maxParentsNb,meanParentsNb);
 
         try {

@@ -18,7 +18,8 @@ public abstract class AttackStep extends Observable {
    private int                      randomSeed;
    private String                   name;
    private Set<Integer>             idSet                   = new HashSet<>();
-   private Order order;
+   private Order                    order;
+   private int                      depth;
 
    private boolean                  hasUpdatedItsChildren   = false;
    private double                   ttc;
@@ -31,7 +32,7 @@ public abstract class AttackStep extends Observable {
    private OrdinalTtcValue          ordinalLocalTtc;
    private Set<AbstractRealDistribution> localTtcDistributions = new HashSet<>();
 
-   private Bucket bucket_;
+   private Bucket                   bucket_;
    private Set<AttackStep>          children                = new HashSet<>();
 
    private Set<AttackStep>          remainingParents;
@@ -477,6 +478,14 @@ public abstract class AttackStep extends Observable {
 
    public void clearDescendants() {
       this.descendants.clear();
+   }
+
+   public int getDepth() {
+      return depth;
+   }
+
+   public void setDepth(int depth) {
+      this.depth = depth;
    }
 
 }
