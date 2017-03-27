@@ -22,6 +22,10 @@ public class Graph implements Observer {
    private String                   ownerComponent;
    private boolean                  upToDate                = false;
    private AttackStep               source;
+   private int                      treeEdges = 0;
+   private int                      forwardEdges = 0;
+   private int                      backEdges = 0;
+   private int                      crossEdges = 0;
 
    public Graph(String name) {this.ownerComponent = name;}
 
@@ -297,6 +301,53 @@ public class Graph implements Observer {
          OutputUtils.printVerbose("Progenies have changed says " + o + "! updating graph " + getOwnerComponentName() + "...");
          this.upToDate = false;
       }
+   }
+
+
+
+   public int getTreeEdges() {
+      return treeEdges;
+   }
+
+   public void incTreeEdges() {
+      this.treeEdges++;
+   }
+
+   public int getForwardEdges() {
+      return forwardEdges;
+   }
+
+   public void incForwardEdges() {
+      this.forwardEdges++;
+   }
+
+   public int getBackEdges() {
+      return backEdges;
+   }
+
+   public void incBackEdges() {
+      this.backEdges++;
+   }
+
+   public int getCrossEdges() {
+      return crossEdges;
+   }
+
+   public void incCrossEdges() {
+      this.crossEdges++;
+   }
+
+   public float getMeanCrossEdges() {
+      return ((float) crossEdges/size());
+   }
+   public float getMeanBackEdges() {
+      return ((float) backEdges/size());
+   }
+   public float getMeanForwardEdges() {
+      return ((float) forwardEdges/size());
+   }
+   public float getMeanTreeEdges() {
+      return ((float) treeEdges/size());
    }
 
 }

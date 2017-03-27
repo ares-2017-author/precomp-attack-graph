@@ -142,6 +142,7 @@ public class TestUtils {
                     children.add(child);
                     graph.addAttackStep(child);
                     parent.connectToChild(child);
+                    graph.incTreeEdges();
                     child.setDepth(parent.getDepth()+1);
                     OutputUtils.printVerbose("Connected parent " + parent.getName()
                             + " to child " + child.getName() + ".");
@@ -162,6 +163,7 @@ public class TestUtils {
                             OutputUtils.printVerbose("Connected parent " + forwardStep.getName()
                                     + " randomly (forward) to child " + child.getName());
                             forwardStep.connectToChild(child);
+                            graph.incForwardEdges();
                         } else OutputUtils.printVerbose("Forward edge: could not find a suitable ancestor in frontier");
                     }
                     // shuffle the frontier again for back edges this time
@@ -182,6 +184,7 @@ public class TestUtils {
                             OutputUtils.printVerbose("Connected parent " + child.getName()
                                     + " randomly to (back) child " + backStep.getName());
                             backStep.connectToChild(child);
+                            graph.incBackEdges();
                         } else OutputUtils.printVerbose("Back edge: could not find a suitable ancestor in frontier");
                     }
                     frontier.add(child);
@@ -206,6 +209,7 @@ public class TestUtils {
 
                         OutputUtils.printVeryVerbose(crossStep.getName() + " gets " + cChild + " as (cross) child.");
                         crossStep.connectToChild(cChild);
+                        graph.incCrossEdges();
                         OutputUtils.printVerbose("Connected parent " + crossStep.getName()
                                 + " randomly to (back) child " + cChild.getName());
                         nCrossEdges--;

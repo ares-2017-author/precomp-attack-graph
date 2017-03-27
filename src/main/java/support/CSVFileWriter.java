@@ -27,7 +27,7 @@ public class CSVFileWriter {
             "P Binomial Forward Edges", "N Binomial Back Edges",
             "P Binomial Back Edges", "N Binomial Cross Edges",
             "P Binomial Cross Edges", "Proportion of AttackStep OR", "Lowest Nbr of Children", "Highest Nbr of Children",
-            "Mean Nbr of Children", "Lowest Nbr of Parents", "Highest Nbr of Parents", "Mean Nbr of Parents"
+            "Mean Nbr of Children", "Mean Nbr of Tree Edges", "Mean Nbr of Forward Edges", "Mean Nbr of Back Edges", "Mean Nbr of Cross Edges"
     };
 
     //Create the CSVFormat object with "\n" as a record delimiter
@@ -66,11 +66,13 @@ public class CSVFileWriter {
 
     public void addNewRecord(int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int nBinomialChildren,
                              double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges,
-                             int nBinomialBackEdges, double pBinomialBackEdges,  int nBinomialCrossEdges, double pBinomialCrossEdges, double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
-                               int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
+                             int nBinomialBackEdges, double pBinomialBackEdges,  int nBinomialCrossEdges, double pBinomialCrossEdges, double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime,
+                             int minChildrenNb,
+                               int maxChildrenNb, float meanChildrenNb,
+                             float mean_tree, float mean_forward, float mean_back, float mean_cross) {
         List<String> record = createNewRecord(nEntrySteps,nExitSteps,nbAttackStepsUnreduced,reduction_ratio,nBinomialChildren,
                 pBinomialChildren,nBinomialForwardEdges,pBinomialForwardEdges, nBinomialBackEdges, pBinomialBackEdges,nBinomialCrossEdges,pBinomialCrossEdges,pMinAttackSteps,graphDensity,nbAttackStepsReduced,
-                execTime,minChildrenNb,maxChildrenNb,meanChildrenNb,minParentsNb,maxParentsNb,meanParentsNb);
+                execTime,minChildrenNb,maxChildrenNb,meanChildrenNb,mean_tree,mean_forward,mean_back,mean_cross);
         records.add(record);
         idCount.incrementAndGet();
     }
@@ -78,8 +80,8 @@ public class CSVFileWriter {
     private List<String> createNewRecord (int nEntrySteps, int nExitSteps, int nbAttackStepsUnreduced, float reduction_ratio, int nBinomialChildren,
                              double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges,
                              int nBinomialBackEdges, double pBinomialBackEdges,  int nBinomialCrossEdges, double pBinomialCrossEdges,
-                             double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
-                             int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
+                             double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb, int maxChildrenNb,
+                                          float meanChildrenNb, float mean_tree, float mean_forward, float mean_back, float mean_cross) {
         List<String> record = new LinkedList<>();
         record.add(Integer.toString(idCount.get()));
         record.add(Integer.toString(nbAttackStepsUnreduced));
@@ -101,9 +103,10 @@ public class CSVFileWriter {
         record.add(Integer.toString(minChildrenNb));
         record.add(Integer.toString(maxChildrenNb));
         record.add(Float.toString(meanChildrenNb));
-        record.add(Integer.toString(minParentsNb));
-        record.add(Integer.toString(maxParentsNb));
-        record.add(Float.toString(meanParentsNb));
+        record.add(Float.toString(mean_tree));
+        record.add(Float.toString(mean_forward));
+        record.add(Float.toString(mean_back));
+        record.add(Float.toString(mean_cross));
         System.out.println(record.stream().collect(Collectors.joining("; ")));
         return record;
     }
@@ -112,10 +115,10 @@ public class CSVFileWriter {
                                double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges,
                                int nBinomialBackEdges, double pBinomialBackEdges,  int nBinomialCrossEdges, double pBinomialCrossEdges,
                                double pMinAttackSteps, float graphDensity, int nbAttackStepsReduced, double execTime, int minChildrenNb,
-                               int maxChildrenNb, float meanChildrenNb, int minParentsNb, int maxParentsNb, float meanParentsNb) {
+                               int maxChildrenNb, float meanChildrenNb, float mean_tree, float mean_forward, float mean_back, float mean_cross) {
         List<String> record = createNewRecord(nEntrySteps,nExitSteps,nbAttackStepsUnreduced,reduction_ratio,nBinomialChildren,
                 pBinomialChildren,nBinomialForwardEdges,pBinomialForwardEdges, nBinomialBackEdges, pBinomialBackEdges,nBinomialCrossEdges,pBinomialCrossEdges,pMinAttackSteps,graphDensity,nbAttackStepsReduced,
-                execTime,minChildrenNb,maxChildrenNb,meanChildrenNb,minParentsNb,maxParentsNb,meanParentsNb);
+                execTime,minChildrenNb, maxChildrenNb,meanChildrenNb,mean_tree,mean_forward,mean_back,mean_cross);
 
         try {
             csvFilePrinter.printRecord(record);
