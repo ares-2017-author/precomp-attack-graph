@@ -56,7 +56,8 @@ public class PerfEval {
  //       for (Object[] testData : allTestData) {
             System.out.println("experiment #" + cpt.get());
             Graph graph = TestUtils.generateRandomGraph((int) testData[0], (int) testData[1], (int) testData[2],
-                    (int) testData[3], (double) testData[4], (int) testData[5], (double) testData[6], (double) testData[7]);
+                    (int) testData[3], (double) testData[4], (int) testData[5], (double) testData[6], (int) testData[7],
+                    (double) testData[8], (int) testData[9], (double) testData[10], (double) testData[11]);
             graph.sample();
             int real_size = graph.size();
             float mean_parents = graph.meanParentNbr();
@@ -363,15 +364,15 @@ public class PerfEval {
                 new Object[]{1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47,
                         49, 51, 53, 55, 57, 59}, // 1. Number of Exit Steps
                 new Object[]{50, 100, 200, 500, 750, 1000}, //2. Total number of attack steps
-                new Object[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, // n Binomial for tree edges per node
-                new Object[]{0.1, 0.5, 1.0}, // 4. p Binomial for tree edges per node
-                new Object[]{1, 2, 3, 4, 5, 6}, // n Binomial for forward edges per node
-                new Object[]{0.1, 0.5, 1.0}, // p Binomial for forward edges per node
-                new Object[]{1, 2, 3, 4, 5, 6}, // n Binomial for cross edges per progeny
-                new Object[]{0.1, 0.5, 1.0}, // p Binomial for cross edges per progeny
-                new Object[]{1, 2, 3, 4, 5, 6}, // n Binomial for back edges per node
-                new Object[]{0.1, 0.5, 1.0}, // p Binomial for back edges per node
-                new Object[]{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}} // 7. Proportion of OR nodes
+                new Object[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, //3. n Binomial for tree edges per node
+                new Object[]{0.1, 0.5, 0.9}, // 4. p Binomial for tree edges per node
+                new Object[]{0, 1, 2, 3, 4, 5, 6}, //5. n Binomial for forward edges per node
+                new Object[]{0.1, 0.5, 0.9}, //6. p Binomial for forward edges per node
+                new Object[]{0, 1, 2, 3, 4, 5, 6}, //7. n Binomial for cross edges per progeny
+                new Object[]{0.1, 0.5, 0.9}, //8. p Binomial for cross edges per progeny
+                new Object[]{0, 1, 2, 3, 4, 5, 6}, //9. n Binomial for back edges per node
+                new Object[]{0.1, 0.5, 0.9}, //10. p Binomial for back edges per node
+                new Object[]{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}} // 11. Proportion of OR nodes
         );
     }
 }
