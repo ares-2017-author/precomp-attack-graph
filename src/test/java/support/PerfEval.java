@@ -81,7 +81,7 @@ public class PerfEval {
     }
 
     /* Individual experiments */
-    public static void main(String args[]) {
+    public static void main4(String args[]) {
         CSVFileWriter CSVFileWriter = new CSVFileWriter("graph-experiments-indiv-nosize.csv");
         TimeWatch tm;
         int nEntrySteps = 4;
@@ -336,8 +336,8 @@ public class PerfEval {
     }
 
 
-    public static void main4(String args[]) {
-        for (float i = 0; i < 10; i++) System.out.print((i / 10) + ", ");
+    public static void main(String args[]) {
+        for (int i = 1; i < 60; i=i+2) System.out.print(i + ", ");
     }
 
     public static void main3(String[] args) {
@@ -358,10 +358,10 @@ public class PerfEval {
 
     private static Object[][] getExperimentData() {
         return Dither.ipog(3, new Object[][]{
-                new Object[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-                        25}, // 0. Number of entry steps
-                new Object[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-                        25}, // 1. Number of Exit Steps
+                new Object[]{1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47,
+                        49, 51, 53, 55, 57, 59}, // 0. Number of entry steps
+                new Object[]{1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47,
+                        49, 51, 53, 55, 57, 59}, // 1. Number of Exit Steps
                 new Object[]{50, 100, 200, 500, 750, 1000}, //2. Total number of attack steps
                 new Object[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, // n Binomial for tree edges per node
                 new Object[]{0.1, 0.5, 1.0}, // 4. p Binomial for tree edges per node
