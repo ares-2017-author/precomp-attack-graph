@@ -66,11 +66,11 @@ public class TestUtils {
             OutputUtils.printVeryVerbose(parent.getName() + " gets " + nChildren + " children.");
             List<AttackStep> children = new ArrayList<>();
             for (int iChild = 1; iChild <= nChildren; iChild++) {
-                nAttackSteps++;
                 if (nAttackSteps <= maxAttackSteps) {
                     /* tree edges */
                     String childName = Integer.toString(nAttackSteps + nEntrySteps);
                     child = randomlyCreateMaxOrMinAttackStep(pMinAttackSteps, childName, Order.MIDSTEP);
+                    nAttackSteps++;
                     children.add(child);
                     graph.addAttackStep(child);
                     parent.connectToChild(child);
@@ -154,31 +154,56 @@ public class TestUtils {
                 }
             }
         }
+        final int finaldepthbeforeExits = depthness;
+        List<AttackStep> deepSteps =
+                graph.attackStepsAsSet().stream().filter(as -> as.getDepth() == finaldepthbeforeExits).collect(Collectors.toList());
+        int createdExits;
+        for (createdExits = 0; createdExits < nEntrySteps / 2; createdExits++) {
+            exitStep = new AttackStepMin("exitStep" + (nAttackSteps + nEntrySteps + 1),
+                    new TestDistribution(0.8, 10, 1), Order.EXITSTEP);
+            graph.addAttackStep(exitStep);
+            AttackStep exitParent = deepSteps.get(rand.nextInt(deepSteps.size()));
+            exitParent.connectToChild(exitStep);
+            exitStep.setDepth(exitParent.getDepth()+1);
+            depthness = Math.max(exitStep.getDepth(),depthness);
+            graph.incTreeEdges();
+            OutputUtils.printVerbose("Connected parent " + exitParent.getName()
+                    + " to child " + exitStep.getName() + ".");
+        }
 
-        exitStep = new AttackStepMin("exitStep" + (nAttackSteps + nEntrySteps + 1),
-                new TestDistribution(0.8, 10, 1), Order.EXITSTEP);
-        graph.addAttackStep(exitStep);
-        graph.getMidSteps().get(graph.getMidSteps().size() - 1).connectToChild(exitStep);
-        graph.incTreeEdges();
-        OutputUtils.printVerbose("Connected parent " + graph.getMidSteps().get(graph.getMidSteps().size() - 1).getName()
-                + " to child " + exitStep.getName() + ".");
 
-        // the rest of the attack steps are chosen randomly
+        // the rest of the exit steps are chosen randomly
         // To make it more realistic, i.e. with exit steps not to close to entry steps,
         // we use a beta distribution a=4 b=1 to select the step to be converted
+        // the idea is to have the exit step still deep inside the graph
         List<AttackStep> allmidsteps = new LinkedList<>(graph.getMidSteps());
         allmidsteps.sort(Comparator.comparing(a -> a.getDepth()));
 //        for(AttackStep as: allmidsteps) System.out.print(as.getName()+"["+as.getDepth()+"] ,");
-        BetaDistribution bd = new BetaDistribution(4,1);
-        bd.reseedRandomGenerator(randomSeed);
-        for (int iExitStep = 2; iExitStep <= nExitSteps; iExitStep++) {
-            int stepId = (int)(bd.sample() * (allmidsteps.size()));
+        BetaDistribution bd_exits = new BetaDistribution(4,1);
+        bd_exits.reseedRandomGenerator(randomSeed);
+        for (int iExitStep = 0; iExitStep < nExitSteps-createdExits; iExitStep++) {
+            int stepId = (int)(bd_exits.sample() * (allmidsteps.size()));
             AttackStep newExitStep = allmidsteps.get(stepId);
             newExitStep.setOrder(Order.EXITSTEP);
             allmidsteps.remove(newExitStep);
         }
-        OutputUtils.printVeryVerbose("\n\n");
 
+        /* Finally, there should be no loose child amongst the mid-steps */
+        List<AttackStep> allsteps = new LinkedList<>(graph.attackStepsAsList());
+        allsteps.sort(Comparator.comparing(a -> a.getDepth()));
+        // it is further enforced that the child has to be deep in the graph
+        BetaDistribution bd_sadSteps = new BetaDistribution(4.5,1);
+        graph.getMidSteps().stream().filter(as -> as.getChildren().isEmpty()).forEach(midstep -> {
+            AttackStep newChild = allsteps.get((int)(bd_sadSteps.sample() * (allmidsteps.size())));
+            midstep.connectToChild(newChild);
+            if (midstep.getDepth() == newChild.getDepth()-1) graph.incTreeEdges();
+            else if (midstep.getDepth() < newChild.getDepth() -1) graph.incForwardEdges();
+            else if (midstep.getDepth() == newChild.getDepth()) graph.incCrossEdges();
+            else if (midstep.getDepth() > newChild.getDepth()) graph.incBackEdges();
+        });
+
+
+        OutputUtils.printVeryVerbose("\n\n");
         return graph;
     }
 
