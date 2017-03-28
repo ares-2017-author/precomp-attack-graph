@@ -87,8 +87,29 @@ public class PerfEval {
         csvFileWriter.close();
     }
 
-    /* Individual experiments */
+    /* Graph size experiments */
     public static void main(String args[]) throws InterruptedException {
+        CSVFileWriter csvFileWriter = new CSVFileWriter("graph-experiments-indiv-size.csv");
+        int nEntrySteps = 4;
+        int nExitSteps = 5;
+        int maxAttackSteps = 500;
+        int nBinomialChildren = 3;
+        double pBinomialChildren = 0.6;
+        int nBinomialForwardEdges = 1;
+        double pBinomialForwardEdges = 0.25;
+        int nBinomialCrossEdges = 1;
+        double pBinomialCrossEdges = 0.15;
+        int nBinomialBackEdges = 1;
+        double pBinomialBackEdges = 0.1;
+        double pMinAttackSteps = 0.65;
+        int iterations = 50;
+        for (int maxSteps = 100; maxSteps < 10001; maxSteps = maxSteps + 100) {
+            performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+        }
+    }
+
+    /* Individual experiments */
+    public static void mainaa(String args[]) throws InterruptedException {
         CSVFileWriter csvFileWriter = new CSVFileWriter("graph-experiments-indiv-nosize.csv");
 //        synchronized (args) {
 //            args.wait(11000);
@@ -118,24 +139,8 @@ public class PerfEval {
         }
 
         /* **** Graph Size **** */
-   /*     for (int maxSteps = 100; maxSteps < 13000; maxSteps = maxSteps * 2) {
-            Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxSteps,
-                    maxChildren, pBinomialChildren, maxOldParents, pBinomialForwardEdges, pMinAttackSteps);
-            graph.sample();
-            int real_size = graph.size();
-            float mean_parents = graph.meanParentNbr();
-            float mean_children = graph.meanChildrenNbr();
-            int min_children = graph.minChildrenNbr();
-            int max_children = graph.maxChildrenNbr();
-            int min_parents = graph.minParentsNbr();
-            int max_parents = graph.maxParentsNbr();
-            tm = TimeWatch.start();
-            graph.reduce();
-            double reduce_time = tm.time(TimeUnit.MILLISECONDS);
-            float reduction_ratio = ((float) real_size / graph.size());
-            csvFileWriter.printNewRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, maxChildren, pBinomialChildren, maxOldParents, pBinomialForwardEdges,
-                    pMinAttackSteps, graph_density, graph.size(), reduce_time, min_children, max_children, mean_children, min_parents, max_parents,
-                    mean_parents);
+   /*     for (int maxSteps = 100; maxSteps < 10001; maxSteps = maxSteps + 100) {
+            performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
         }*/
 
         /* **** DirectChildren **** */
