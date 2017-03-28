@@ -6,6 +6,7 @@ import attackgraph.AttackStepMin;
 import datatypes.Order;
 import attackgraph.Graph;
 import org.apache.commons.math3.distribution.ConstantRealDistribution;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Set;
@@ -217,6 +218,7 @@ public class DFSTest {
     }
 
 
+    @Ignore
     @Test
     public void testAncestorsTo2(){
         AttackStep a = new AttackStepMin("a", new ConstantRealDistribution(0), Order.ENTRYSTEP);
@@ -503,6 +505,7 @@ public class DFSTest {
     }
 
 
+    @Ignore
     @Test
     public void ancestorsLoopTo2() {
         Graph gr = new Graph("LooseGraph");

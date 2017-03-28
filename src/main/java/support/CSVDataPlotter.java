@@ -40,4 +40,22 @@ public class CSVDataPlotter {
         }
         return result;
     }
+
+    public static String csvRecordsToPgfPlots(String fileName, int ordinate, int abcsissa, int applicate, int start, int end) {
+        String result = "";
+        try {
+            Reader in = new FileReader(fileName);
+            Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
+            for (CSVRecord record : records) {
+                int id = Integer.parseInt(record.get(0));
+                if (id >= start && id <= end)
+                    result += "("+record.get(ordinate)+","+record.get(abcsissa)+","+record.get(applicate)+")";
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }

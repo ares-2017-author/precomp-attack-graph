@@ -178,7 +178,7 @@ public abstract class AttackStep extends Observable {
     * @return Set of ancestors AttackStep
      */
    public Set<AttackStep> ancestorsTo(AttackStep source) {
-      Set<AttackStep> ancestors = DFS.depthFirstAncestorsTo2(this,source);//source, new HashSet<>());
+      Set<AttackStep> ancestors = DFS.depthFirstAncestorsTo(this,source);//source, new HashSet<>());
       ancestors.remove(this);
       return ancestors;
    }
@@ -203,7 +203,7 @@ public abstract class AttackStep extends Observable {
     * @return
      */
    public Set<AttackStep> descendantsTo(AttackStep target) {
-      Set<AttackStep> progeny = DFS.depthFirstDescendantsTo2(this,target);//source, new HashSet<>());
+      Set<AttackStep> progeny = DFS.depthFirstDescendantsTo(this,target);//source, new HashSet<>());
       progeny.remove(this);
       return progeny;
    }

@@ -175,7 +175,7 @@ public class PerfEval {
     }
 
     private static void performMultipleReductions(CSVFileWriter CSVFileWriter, int nEntrySteps, int nExitSteps, int maxAttackSteps, int nBinomialChildren, double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges, int nBinomialCrossEdges, double pBinomialCrossEdges, int nBinomialBackEdges, double pBinomialBackEdges, double pMinAttackSteps, int iterations) {
-        final int[] real_size = new int[1];
+        int real_size = 0;
         float reduced_size = 0;
         float min_children = 0;
         float max_children = 0;
@@ -194,8 +194,8 @@ public class PerfEval {
                     nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges,
                     nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps);
             graph.sample();
-            if (i == 0) real_size[0] = graph.size();
             int realSize = graph.size();
+            System.out.println("init size: "+realSize);
             List<Object> instance_data = new LinkedList<>();
             instance_data.add(graph.minChildrenNbr()); // 0. min_children
             instance_data.add(graph.maxChildrenNbr()); // 1. max children
@@ -210,6 +210,7 @@ public class PerfEval {
             instance_data.add(tm.time(TimeUnit.MILLISECONDS)); // 8. reduce_time
             instance_data.add(graph.size()); // 9. reduced_size
             instance_data.add(((float) realSize / graph.size())); //10. reduction_ratio
+            instance_data.add(realSize); // 11. size before reduction
             data.add(instance_data);
         });
         for(List<Object> inst : data) {
@@ -225,6 +226,7 @@ public class PerfEval {
             reduced_size += (int)inst.get(9);
             reduction_ratio += (float)inst.get(10);
         }
+        real_size = (int)data.get(0).get(11);
         System.out.println("reduction ratio: "+reduction_ratio);
         min_children = min_children / iterations;
         max_children = max_children / iterations;
@@ -237,7 +239,7 @@ public class PerfEval {
         reduce_time = reduce_time / iterations;
         reduced_size = reduced_size / iterations;
         reduction_ratio = reduction_ratio / iterations;
-        CSVFileWriter.printNewRecord(nEntrySteps, nExitSteps, real_size[0], reduction_ratio, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges,
+        CSVFileWriter.printNewRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges,
                 nBinomialBackEdges,pBinomialBackEdges,nBinomialCrossEdges,pBinomialCrossEdges,
                 pMinAttackSteps, graph_density, (int)reduced_size, reduce_time,(int)min_children, (int)max_children, mean_children, mean_tree,
                 mean_forward, mean_back, mean_cross);

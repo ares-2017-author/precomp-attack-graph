@@ -55,7 +55,7 @@ public class DFS {
             if (adjNode.equals(t) || matchingASs.contains(adjNode)) {
                 matchingASs.add(adjNode);
                 matchingASs.addAll(visited);
-//                visited.removeAll(matchingASs);
+                visited.removeAll(matchingASs);
                 continue;
             }
             if ((visited.contains(adjNode) && !matchingASs.contains(adjNode)) || adjNode.equals(t)) {
