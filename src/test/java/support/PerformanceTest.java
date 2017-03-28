@@ -424,11 +424,10 @@ public class PerformanceTest {
         OutputUtils.printVerbose("Computation time once reduced: " + computation_time_reduced + " ms.");
     }
 
-    @Ignore
     @Test
     public void testMC1600b() throws InterruptedException {
         OutputUtils.verboseOff();
-        Graph graph = TestUtils.generateRandomGraph(2, 3, 1600, 3, 0.3, 3, 0.2, 0.7);
+        Graph graph = TestUtils.generateRandomGraph(2, 3, 4000, 3, 0.7, 2, 0.3, 0.7);
         //   Graph reducedGraph = Graph.class.c graph.clone();
         TimeWatch tm = TimeWatch.start();
         int init_size = graph.attackStepsAsList().size();
@@ -440,11 +439,11 @@ public class PerformanceTest {
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
-
+        tm = TimeWatch.start();
         graph.reduce();
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
-
+        tm = TimeWatch.start();
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
@@ -704,7 +703,7 @@ public class PerformanceTest {
     @Test
     public void testMC450Correctness() {
         // OutputUtils.verboseOn();
-        Graph graph = TestUtils.generateRandomGraph(3, 4, 450, 6, 0.4, 3, 0.3, 0.65);
+        Graph graph = TestUtils.generateRandomGraph(3, 4, 450, 4, 0.7, 2, 0.3, 1, 0.2, 1, 0.15, 0.65);
         int initSize = graph.attackStepsAsList().size();
 
         graph.softReset();

@@ -7,7 +7,7 @@ import java.util.*;
 public class DFS {
 
     /**
-     * All descendants between a target node and its potential descendant s.
+     * All ancestors between a target node and its potential ancestor s.
      * Starts from s and then ascend to each parent, until reaching t.
      * @param s source node
      * @param t target node
@@ -47,7 +47,7 @@ public class DFS {
             adjacentASs = current.getChildren();
 
         for (AttackStep adjNode : adjacentASs) {
-            // We don't want looped paths
+            // We don't want looped paths directly starting from source
             if (adjNode.equals(s)) continue;
             if (visited.contains(adjNode) && !matchingASs.contains(adjNode)) {
                     continue;
@@ -55,7 +55,7 @@ public class DFS {
             if (adjNode.equals(t) || matchingASs.contains(adjNode)) {
                 matchingASs.add(adjNode);
                 matchingASs.addAll(visited);
-                visited.removeAll(matchingASs);
+//                visited.removeAll(matchingASs);
                 continue;
             }
             if ((visited.contains(adjNode) && !matchingASs.contains(adjNode)) || adjNode.equals(t)) {
@@ -65,6 +65,36 @@ public class DFS {
             depthFirstTo(t, s, visited, matchingASs, ascending);
             if (!visited.isEmpty()) visited.pop();
         }
+    }
+
+    public static Set<AttackStep> depthFirstDescendantsTo2(AttackStep s, AttackStep t) {
+        Set<AttackStep> descendants = new HashSet<>();
+        for(AttackStep child: s.getChildren()) descendants.addAll(depthFirstTo(child,t, new HashSet<>(), false));
+        return descendants;
+    }
+
+    public static Set<AttackStep> depthFirstAncestorsTo2(AttackStep s, AttackStep t) {
+        Set<AttackStep> ancestors = new HashSet<>();
+        for(AttackStep parent: s.getExpectedParents()) ancestors.addAll(depthFirstTo(parent,t, new HashSet<>(), true));
+        return ancestors;
+    }
+
+    private static Set<AttackStep> depthFirstTo(AttackStep current, AttackStep t, Set<AttackStep> visited, boolean ascending) {
+        if (visited.contains(current)) return new HashSet<>();
+        if (current.equals(t)) return visited;
+
+        visited.add(current);
+        Set<AttackStep> adjacentASs;
+        if (ascending)
+            adjacentASs = current.getExpectedParents();
+        else
+            adjacentASs = current.getChildren();
+
+        Set<AttackStep> results = new HashSet<>();
+        for (AttackStep adjNode : adjacentASs) {
+            results.addAll(depthFirstTo(adjNode,t, visited, ascending));
+        }
+        return results;
     }
 
     public static Set<AttackStep> depthFirstAncestorsOf(AttackStep as) {

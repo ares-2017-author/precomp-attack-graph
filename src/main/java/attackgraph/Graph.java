@@ -26,6 +26,7 @@ public class Graph implements Observer {
    private int                      forwardEdges = 0;
    private int                      backEdges = 0;
    private int                      crossEdges = 0;
+   private int                      edgescount = 0;
 
    public Graph(String name) {this.ownerComponent = name;}
 
@@ -310,7 +311,7 @@ public class Graph implements Observer {
    }
 
    public void incTreeEdges() {
-      this.treeEdges++;
+      this.treeEdges++; this.edgescount++;
    }
 
    public int getForwardEdges() {
@@ -318,7 +319,7 @@ public class Graph implements Observer {
    }
 
    public void incForwardEdges() {
-      this.forwardEdges++;
+      this.forwardEdges++; this.edgescount++;
    }
 
    public int getBackEdges() {
@@ -326,7 +327,7 @@ public class Graph implements Observer {
    }
 
    public void incBackEdges() {
-      this.backEdges++;
+      this.backEdges++; this.edgescount++;
    }
 
    public int getCrossEdges() {
@@ -334,20 +335,25 @@ public class Graph implements Observer {
    }
 
    public void incCrossEdges() {
-      this.crossEdges++;
+      this.crossEdges++; this.edgescount++;
    }
 
    public float getMeanCrossEdges() {
-      return ((float) crossEdges/size());
+      return  ((float)crossEdges/this.edgescount);
    }
    public float getMeanBackEdges() {
-      return ((float) backEdges/size());
+      return ((float)backEdges/this.edgescount);
    }
    public float getMeanForwardEdges() {
-      return ((float) forwardEdges/size());
+      return ((float)forwardEdges/this.edgescount);
    }
    public float getMeanTreeEdges() {
-      return ((float) treeEdges/size());
+      return ((float)treeEdges/this.edgescount);
    }
+
+   public int getEdgescount() {
+      return edgescount;
+   }
+
 
 }

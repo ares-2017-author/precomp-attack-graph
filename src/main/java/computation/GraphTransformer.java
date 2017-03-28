@@ -65,10 +65,10 @@ public class GraphTransformer {
     }
 
     /*
-     * Instead of randomly selecting a descendant, we should move step by
+     * Instead of randomly selecting a descendant, we move step by
      * step to children and grand children. As soon as a step in a line of
-     * descendants became ANY, we could stop exploring that thread. Thus,
-     * we need a recursive method that: 1. Starts with the source. 2. Steps
+     * descendants became ANY, we stop exploring that thread. Thus,
+     * we have a recursive method that: 1. Starts with the source. 2. Steps
      * into each child. 3. If all parents are ANY, terminate the recursion.
      * 4. Otherwise, delete all relevant edges to parents, and 5. Recursive
      * call to repeat steps 3-4 for each child.

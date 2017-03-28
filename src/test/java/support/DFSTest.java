@@ -167,7 +167,7 @@ public class DFSTest {
     }
 
     @Test
-    public void testAncestorsTo2(){
+    public void testAncestorsToBis(){
         AttackStep a = new AttackStepMin("a", new ConstantRealDistribution(0), Order.ENTRYSTEP);
         AttackStep b = new AttackStepMin("b", new ConstantRealDistribution(0), Order.ENTRYSTEP);
         AttackStep c = new AttackStepMin("c", new ConstantRealDistribution(0), Order.MIDSTEP);
@@ -207,6 +207,57 @@ public class DFSTest {
         assertTrue(ancestorsJtoA.contains(b));
         assertTrue(ancestorsJtoA.contains(c));
         assertTrue(ancestorsJtoA.contains(a));
+        assertTrue(ancestorsJtoA.contains(e));
+        assertTrue(ancestorsJtoA.contains(g));
+        assertTrue(ancestorsJtoA.contains(h));
+        assertFalse(ancestorsJtoA.contains(j));
+        assertFalse(ancestorsJtoA.contains(f));
+        assertFalse(ancestorsJtoA.contains(i));
+        assertFalse(ancestorsJtoA.contains(k));
+    }
+
+
+    @Test
+    public void testAncestorsTo2(){
+        AttackStep a = new AttackStepMin("a", new ConstantRealDistribution(0), Order.ENTRYSTEP);
+        AttackStep b = new AttackStepMin("b", new ConstantRealDistribution(0), Order.ENTRYSTEP);
+        AttackStep c = new AttackStepMin("c", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep d = new AttackStepMin("d", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep e = new AttackStepMin("e", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep f = new AttackStepMin("f", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep g = new AttackStepMin("g", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep h = new AttackStepMin("h", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep i = new AttackStepMin("i", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep j = new AttackStepMin("j", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep k = new AttackStepMin("k", new ConstantRealDistribution(0), Order.EXITSTEP);
+
+        a.connectToChild(b);
+        a.connectToChild(c);
+        b.connectToChild(d);
+        b.connectToChild(e);
+        c.connectToChild(e);
+        c.connectToChild(f);
+        f.connectToChild(i);
+        d.connectToChild(g);
+        e.connectToChild(g);
+        e.connectToChild(h);
+        g.connectToChild(j);
+        h.connectToChild(j);
+        h.connectToChild(k);
+
+        Graph gr = new Graph("loos");
+        gr.addAttackSteps(a,b,c,d,e,f,g,h,i,j,k);
+
+        Set<AttackStep> ancestorsJtoA = DFS.depthFirstAncestorsTo2(j,a);
+        System.out.println(ancestorsJtoA.stream().map(AttackStep::getName).collect(Collectors.joining("; ")));
+
+        OutputUtils.plotOn();
+        OutputUtils.mathematicaPlot(gr,2);
+
+        assertTrue(ancestorsJtoA.contains(d));
+        assertTrue(ancestorsJtoA.contains(b));
+        assertTrue(ancestorsJtoA.contains(c));
+        assertFalse(ancestorsJtoA.contains(a));
         assertTrue(ancestorsJtoA.contains(e));
         assertTrue(ancestorsJtoA.contains(g));
         assertTrue(ancestorsJtoA.contains(h));
@@ -451,6 +502,62 @@ public class DFSTest {
         assertFalse(ancestorsAS6toAS3.contains(as6));
     }
 
+
+    @Test
+    public void ancestorsLoopTo2() {
+        Graph gr = new Graph("LooseGraph");
+        AttackStep as1 = new AttackStepMin("as1", new ConstantRealDistribution(0), Order.ENTRYSTEP);
+        AttackStep as2 = new AttackStepMin("as2", new ConstantRealDistribution(2), Order.MIDSTEP);
+        AttackStep as3 = new AttackStepMin("as3", new ConstantRealDistribution(2), Order.MIDSTEP);
+        AttackStep as4 = new AttackStepMin("as4", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep as5 = new AttackStepMin("as5", new ConstantRealDistribution(0), Order.MIDSTEP);
+        AttackStep as6 = new AttackStepMin("as6", new ConstantRealDistribution(0), Order.EXITSTEP);
+
+        as1.connectToChild(as2);
+        as2.connectToChild(as3);
+        as3.connectToChild(as4);
+        as4.connectToChild(as5);
+        as5.connectToChild(as2);
+        as5.connectToChild(as6);
+        gr.addAttackSteps(as1, as2, as3, as4, as5, as6);
+
+        Set<AttackStep> ancestorsAS5toAS2 = DFS.depthFirstAncestorsTo2(as5,as2);
+        Set<AttackStep> ancestorsAS6toAS3 = DFS.depthFirstAncestorsTo2(as6,as3);
+        Set<AttackStep> ancestorsAS6toAS1 = DFS.depthFirstAncestorsTo2(as6,as1);
+        Set<AttackStep> ancestorsAS4toAS1 = DFS.depthFirstAncestorsTo2(as4,as1);
+
+        OutputUtils.plotOn();
+        OutputUtils.mathematicaPlot(gr,2);
+
+        assertFalse(ancestorsAS5toAS2.contains(as5));
+        assertTrue(ancestorsAS5toAS2.contains(as4));
+        assertTrue(ancestorsAS5toAS2.contains(as3));
+        assertFalse(ancestorsAS5toAS2.contains(as2));
+        assertFalse(ancestorsAS5toAS2.contains(as1));
+        assertFalse(ancestorsAS5toAS2.contains(as6));
+
+        assertTrue(ancestorsAS6toAS1.contains(as5));
+        assertTrue(ancestorsAS6toAS1.contains(as4));
+        assertTrue(ancestorsAS6toAS1.contains(as3));
+        assertFalse(ancestorsAS6toAS1.contains(as1));
+        assertTrue(ancestorsAS6toAS1.contains(as2));
+        assertFalse(ancestorsAS6toAS1.contains(as6));
+
+        assertFalse(ancestorsAS4toAS1.contains(as5));
+        assertFalse(ancestorsAS4toAS1.contains(as4));
+        assertTrue(ancestorsAS4toAS1.contains(as3));
+        assertFalse(ancestorsAS4toAS1.contains(as1));
+        assertTrue(ancestorsAS4toAS1.contains(as2));
+        assertFalse(ancestorsAS4toAS1.contains(as6));
+
+        assertTrue(ancestorsAS6toAS3.contains(as5));
+        assertTrue(ancestorsAS6toAS3.contains(as4));
+        assertFalse(ancestorsAS6toAS3.contains(as3));
+        assertFalse(ancestorsAS6toAS3.contains(as1));
+        assertFalse(ancestorsAS6toAS3.contains(as2));
+        assertFalse(ancestorsAS6toAS3.contains(as6));
+    }
+
     @Test
     public void ProgenyLoopTo() {
         Graph gr = new Graph("LooseGraph");
@@ -492,7 +599,7 @@ public class DFSTest {
     }
 
     @Test
-    public void ProgenyLoopTo2() throws Exception{
+    public void ProgenyLoopToBis() throws Exception{
         OutputUtils.plotOn();
         OutputUtils.veryVerboseOn();
         // A is now a ExitStep so should not be removed
