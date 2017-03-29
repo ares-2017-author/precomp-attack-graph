@@ -44,6 +44,8 @@ public class TestUtils {
 
         treeEdgesDistribution.reseedRandomGenerator(randomSeed);
         forwardEdgesDistribution.reseedRandomGenerator(randomSeed);
+        crossEdgesDistribution.reseedRandomGenerator(randomSeed);
+        backEdgesDistribution.reseedRandomGenerator(randomSeed);
         rand.setSeed(randomSeed);
         OutputUtils.printVeryVerbose("Create model");
 
@@ -172,7 +174,7 @@ public class TestUtils {
         }
 
 
-        // the rest of the exit steps are chosen randomly
+        // the rest of the attack steps are chosen randomly
         // To make it more realistic, i.e. with exit steps not to close to entry steps,
         // we use a beta distribution a=4 b=1 to select the step to be converted
         // the idea is to have the exit step still deep inside the graph
@@ -181,7 +183,7 @@ public class TestUtils {
 //        for(AttackStep as: allmidsteps) System.out.print(as.getName()+"["+as.getDepth()+"] ,");
         BetaDistribution bd_exits = new BetaDistribution(4,1);
         bd_exits.reseedRandomGenerator(randomSeed);
-        for (int iExitStep = 0; iExitStep < nExitSteps-createdExits; iExitStep++) {
+        for (int iExitStep = 1; iExitStep < nExitSteps-createdExits; iExitStep++) {
             int stepId = (int)(bd_exits.sample() * (allmidsteps.size()));
             AttackStep newExitStep = allmidsteps.get(stepId);
             newExitStep.setOrder(Order.EXITSTEP);
@@ -206,6 +208,7 @@ public class TestUtils {
         OutputUtils.printVeryVerbose("\n\n");
         return graph;
     }
+
 
     private static AttackStep randomlyCreateMaxOrMinAttackStep(double pMinAttackSteps, String name, Order order) {
         AttackStep child;

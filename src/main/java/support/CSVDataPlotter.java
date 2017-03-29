@@ -1,5 +1,7 @@
 package support;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
@@ -7,6 +9,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CSVDataPlotter {
 
@@ -28,7 +34,9 @@ public class CSVDataPlotter {
         try {
             Reader in = new FileReader(fileName);
             Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
-            for (CSVRecord record : records) {
+            List<CSVRecord> listRecords = Lists.newLinkedList(records);
+//            listRecords.sort(Comparator.comparing(r -> r.get(ordinate)));
+            for (CSVRecord record : listRecords) {
                 int id = Integer.parseInt(record.get(0));
                 if (id >= start && id <= end)
                     result += "("+record.get(ordinate)+","+record.get(abcsissa)+")";
