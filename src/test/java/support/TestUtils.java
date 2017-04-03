@@ -3,7 +3,6 @@ package support;
 
 import attackgraph.*;
 import datatypes.Order;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.math3.distribution.BetaDistribution;
 import org.apache.commons.math3.distribution.BinomialDistribution;
 
@@ -18,14 +17,21 @@ public class TestUtils {
     public static Graph generateRandomGraph(int nEntrySteps, int nExitSteps, int maxAttackSteps, int nBinomialTreeEdges,
                                             double pBinomialTreeEdges, int nBinomialForwardEdges, double pBinomialForwardEdges,
                                             double pMinAttackSteps) {
-
-        Graph graph = generateRandomGraph(nEntrySteps,nExitSteps,maxAttackSteps,nBinomialTreeEdges,pBinomialTreeEdges,
+        return generateRandomGraph(nEntrySteps,nExitSteps,maxAttackSteps,nBinomialTreeEdges,pBinomialTreeEdges,
                 nBinomialForwardEdges,pBinomialForwardEdges,1,0.05,1,0.05,pMinAttackSteps);
-
-        return graph;
     }
 
     public static Graph generateRandomGraph(int nEntrySteps, int nExitSteps, int maxAttackSteps, int nBinomialTreeEdges,
+                                            double pBinomialTreeEdges, int nBinomialForwardEdges, double pBinomialForwardEdges,
+                                            int nBinomialCrossEdges, double pBinomialCrossEdges, int nBinomialBackEdges,
+                                            double pBinomialBackEdges, double pMinAttackSteps) {
+        return generateRandomGraph(maxAttackSteps, -1, nEntrySteps, 1, 1, nExitSteps, 1, 1, nBinomialTreeEdges,
+                pBinomialTreeEdges, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges,
+                nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps);
+    }
+
+    public static Graph generateRandomGraph(int size, int rowThreshold, int nEntrySteps, float aBetaEntries, float bBetaEntries, int nExitSteps,
+                                            float aBetaExits, float bBetaExits, int nBinomialTreeEdges,
                                             double pBinomialTreeEdges, int nBinomialForwardEdges, double pBinomialForwardEdges,
                                             int nBinomialCrossEdges, double pBinomialCrossEdges, int nBinomialBackEdges,
                                             double pBinomialBackEdges, double pMinAttackSteps) {
@@ -40,7 +46,7 @@ public class TestUtils {
         BinomialDistribution forwardEdgesDistribution = new BinomialDistribution(nBinomialForwardEdges, pBinomialForwardEdges);
         BinomialDistribution crossEdgesDistribution = new BinomialDistribution(nBinomialCrossEdges, pBinomialCrossEdges);
         BinomialDistribution backEdgesDistribution = new BinomialDistribution(nBinomialBackEdges, pBinomialBackEdges);
-        AttackStep exitStep;
+
 
         treeEdgesDistribution.reseedRandomGenerator(randomSeed);
         forwardEdgesDistribution.reseedRandomGenerator(randomSeed);
@@ -49,12 +55,17 @@ public class TestUtils {
         rand.setSeed(randomSeed);
         OutputUtils.printVeryVerbose("Create model");
 
-        AttackStepMin entryStep;
-        for (int iEntryStep = 1; iEntryStep <= nEntrySteps; iEntryStep++) {
-            entryStep = new AttackStepMin("entryStep" + iEntryStep, new TestDistribution(0.8, 10, 1), Order.ENTRYSTEP);
-            graph.addAttackStep(entryStep);
-            frontier.add(entryStep);
-            entryStep.setDepth(0);
+        // We imagine a ghost root vertex. Therefore, the size of the first row of vertices is decided by sampling
+        // the treeEdgeDistribution.
+
+        int nbrOfFirstRow = treeEdgesDistribution.sample();
+        AttackStep firstRowStep;
+        for (int i = 1; i <= nbrOfFirstRow; i++) {
+            firstRowStep = randomlyCreateMaxOrMinAttackStep(pMinAttackSteps, Integer.toString(i), Order.MIDSTEP);
+            graph.addAttackStep(firstRowStep);
+            frontier.add(firstRowStep);
+            firstRowStep.setDepth(0);
+            nAttackSteps++;
         }
         while (frontier.size() > 0) {
             OutputUtils.printVeryVerbose("Frontier holds " + frontier.size() + " elements.");
@@ -62,15 +73,12 @@ public class TestUtils {
             frontier.remove(parent);
             stepList.add(parent);
             int nChildren = treeEdgesDistribution.sample();
-            if (frontier.size() == 0 && nChildren == 0) {
-                nChildren = 1;
-            }
             OutputUtils.printVeryVerbose(parent.getName() + " gets " + nChildren + " children.");
             List<AttackStep> children = new ArrayList<>();
             for (int iChild = 1; iChild <= nChildren; iChild++) {
-                if (nAttackSteps <= maxAttackSteps) {
+                if (nAttackSteps <= size) {
                     /* tree edges */
-                    String childName = Integer.toString(nAttackSteps + nEntrySteps);
+                    String childName = Integer.toString(nAttackSteps);
                     child = randomlyCreateMaxOrMinAttackStep(pMinAttackSteps, childName, Order.MIDSTEP);
                     nAttackSteps++;
                     children.add(child);
@@ -156,53 +164,36 @@ public class TestUtils {
                 }
             }
         }
-        final int finaldepthbeforeExits = depthness;
-        List<AttackStep> deepSteps =
-                graph.attackStepsAsSet().stream().filter(as -> as.getDepth() == finaldepthbeforeExits).collect(Collectors.toList());
-        int createdExits;
-        for (createdExits = 0; createdExits < nEntrySteps / 2; createdExits++) {
-            exitStep = new AttackStepMin("exitStep" + (nAttackSteps + nEntrySteps + 1),
-                    new TestDistribution(0.8, 10, 1), Order.EXITSTEP);
-            graph.addAttackStep(exitStep);
-            AttackStep exitParent = deepSteps.get(rand.nextInt(deepSteps.size()));
-            exitParent.connectToChild(exitStep);
-            exitStep.setDepth(exitParent.getDepth()+1);
-            depthness = Math.max(exitStep.getDepth(),depthness);
-            graph.incTreeEdges();
-            OutputUtils.printVerbose("Connected parent " + exitParent.getName()
-                    + " to child " + exitStep.getName() + ".");
+
+        // the entry steps are chosen randomly
+        // As heuristic, we use a beta distribution to select the step to be converted based on their depth inside the graph
+        // By default, there is no heuristic (a=1, b=1)
+        List<AttackStep> allmidsteps = new LinkedList<>(graph.getMidSteps());
+        allmidsteps.sort(Comparator.comparing(a -> a.getDepth()));
+        BetaDistribution bd_entry = new BetaDistribution(aBetaEntries,bBetaEntries);
+        bd_entry.reseedRandomGenerator(randomSeed);
+        for (int iEntryStep = 1; iEntryStep < nEntrySteps; iEntryStep++) {
+            int stepId = (int)(bd_entry.sample() * (allmidsteps.size()));
+            AttackStep newEntryStep = allmidsteps.get(stepId);
+            newEntryStep.setOrder(Order.ENTRYSTEP);
+            newEntryStep.setName("entrystep-"+newEntryStep.getName());
+            allmidsteps.remove(newEntryStep);
         }
 
 
-        // the rest of the attack steps are chosen randomly
-        // To make it more realistic, i.e. with exit steps not to close to entry steps,
-        // we use a beta distribution a=4 b=1 to select the step to be converted
-        // the idea is to have the exit step still deep inside the graph
-        List<AttackStep> allmidsteps = new LinkedList<>(graph.getMidSteps());
+        // the exit steps are chosen randomly
+        // As heuristic, we use a beta distribution to select the step to be converted based on their depth inside the graph
+        // By default, there is no heuristic (a=1, b=1)
         allmidsteps.sort(Comparator.comparing(a -> a.getDepth()));
-//        for(AttackStep as: allmidsteps) System.out.print(as.getName()+"["+as.getDepth()+"] ,");
-        BetaDistribution bd_exits = new BetaDistribution(4,1);
+        BetaDistribution bd_exits = new BetaDistribution(aBetaExits,bBetaExits);
         bd_exits.reseedRandomGenerator(randomSeed);
-        for (int iExitStep = 1; iExitStep < nExitSteps-createdExits; iExitStep++) {
+        for (int iExitStep = 1; iExitStep < nExitSteps; iExitStep++) {
             int stepId = (int)(bd_exits.sample() * (allmidsteps.size()));
             AttackStep newExitStep = allmidsteps.get(stepId);
             newExitStep.setOrder(Order.EXITSTEP);
+            newExitStep.setName("exitstep-"+newExitStep.getName());
             allmidsteps.remove(newExitStep);
         }
-
-        /* Finally, there should be no loose child amongst the mid-steps */
-        List<AttackStep> allsteps = new LinkedList<>(graph.attackStepsAsList());
-        allsteps.sort(Comparator.comparing(a -> a.getDepth()));
-        // it is further enforced that the child has to be deep in the graph
-        BetaDistribution bd_sadSteps = new BetaDistribution(4.5,1);
-        graph.getMidSteps().stream().filter(as -> as.getChildren().isEmpty()).forEach(midstep -> {
-            AttackStep newChild = allsteps.get((int)(bd_sadSteps.sample() * (allmidsteps.size())));
-            midstep.connectToChild(newChild);
-            if (midstep.getDepth() == newChild.getDepth()-1) graph.incTreeEdges();
-            else if (midstep.getDepth() < newChild.getDepth() -1) graph.incForwardEdges();
-            else if (midstep.getDepth() == newChild.getDepth()) graph.incCrossEdges();
-            else if (midstep.getDepth() > newChild.getDepth()) graph.incBackEdges();
-        });
 
 
         OutputUtils.printVeryVerbose("\n\n");
