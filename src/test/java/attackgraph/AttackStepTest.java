@@ -70,16 +70,17 @@ public class AttackStepTest {
         a.connectToChild(e);
         e.connectToChild(f);
 
+
+
         assertTrue(d.ancestorsTo(a).contains(b));
         assertTrue(d.ancestorsTo(a).contains(c));
-        assertTrue(d.ancestorsTo(a).contains(a));
+        assertFalse(d.ancestorsTo(a).contains(a));
         assertFalse(d.ancestorsTo(a).contains(e));
         assertFalse(d.ancestorsTo(a).contains(f));
         assertFalse(d.ancestorsTo(b).contains(a));
-        assertTrue(d.ancestorsTo(a).contains(a));
 
         assertTrue(a.descendantsTo(c).contains(b));
-        assertTrue(a.descendantsTo(c).contains(c));
+        assertFalse(a.descendantsTo(c).contains(c));
         assertFalse(a.descendantsTo(c).contains(d));
         assertFalse(a.descendantsTo(c).contains(e));
 

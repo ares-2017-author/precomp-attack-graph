@@ -67,6 +67,7 @@ public class GraphTest {
       OutputUtils.mathematicaPlot(graph,2);
       OutputUtils.plotOff();
       graph.softReset();
+      OutputUtils.verboseOn();
       graph.reduce();
       OutputUtils.plotOn();
       OutputUtils.printVerbose(Double.toString(graph.getExitSteps().get(0).getTtc()));

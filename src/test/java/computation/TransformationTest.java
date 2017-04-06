@@ -45,8 +45,8 @@ public class TransformationTest {
       OutputUtils.mathematicaPlot(serviceGraph, 5);
       OutputUtils.plotOff();
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteAllRedundantEdges",serviceGraph);
+      GraphTransformer graphTransformer = new GraphTransformer(serviceGraph);
+      Whitebox.invokeMethod(graphTransformer,"deleteAllRedundantEdges");
 
       OutputUtils.plotOn();
       OutputUtils.mathematicaPlot(serviceGraph, 5);
@@ -75,7 +75,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -105,7 +105,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -136,7 +136,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -166,7 +166,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -196,7 +196,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -227,7 +227,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -258,7 +258,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -288,7 +288,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -318,7 +318,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -349,7 +349,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
 
@@ -381,7 +381,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       Whitebox.invokeMethod(graphTransformer,"tryOrdinalReduce",c,a,b);
 
       assertTrue(a.getChildren().contains(b));
@@ -423,7 +423,7 @@ public class TransformationTest {
       assertEquals(graph.getEntrySteps().get(1),b);
       graph.ordinalCompute(graph.getEntrySteps().get(1));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
       graphTransformer.deleteRedundantEdgesFromSource(graph, a);
 
       OutputUtils.mathematicaPlot(graph, 1);
@@ -470,8 +470,8 @@ public class TransformationTest {
       assertEquals(graph.getEntrySteps().get(1),b);
       graph.ordinalCompute(graph.getEntrySteps().get(1));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteAllRedundantEdges",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"deleteAllRedundantEdges");
 
       OutputUtils.plotOn();
       OutputUtils.mathematicaPlot(graph, 1);
@@ -519,8 +519,8 @@ public class TransformationTest {
       assertEquals(graph.getEntrySteps().get(1),b);
       graph.ordinalCompute(graph.getEntrySteps().get(1));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"ordinalComputeAndDeleteReduntantEdges",graph,a);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"ordinalComputeAndDeleteReduntantEdges",a);
 
       OutputUtils.plotOn();
       OutputUtils.mathematicaPlot(graph, 1);
@@ -553,7 +553,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
 
       OutputUtils.plotOn();
       OutputUtils.partialMathematicaPlot(Sets.newHashSet(a,b,c),0);
@@ -589,7 +589,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -599,6 +599,7 @@ public class TransformationTest {
       assertTrue(a.getProgenyI().contains(b));
    }
 
+   @Ignore
    @Test
    public void deleteRedundantEFSSourceSource() throws Exception{
       OutputUtils.verboseOn();
@@ -621,7 +622,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
       // TODO figure out firstparent is random
@@ -652,7 +653,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -683,7 +684,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -715,7 +716,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -747,7 +748,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -779,7 +780,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -812,7 +813,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -843,7 +844,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -874,7 +875,7 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(a.getChildren().contains(b));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(g);
       g.computeDescendantsOf(a);
       graphTransformer.deleteRedundantEdgesFromSource(g,a);
 
@@ -907,8 +908,8 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(c.getChildren().contains(d));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent");
       OutputUtils.mathematicaPlot(graph,2);
       assertFalse(a.getChildren().contains(b));
       assertFalse(b.getChildren().contains(d));
@@ -948,8 +949,8 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(c.getChildren().contains(d));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent");
       OutputUtils.mathematicaPlot(graph,2);
       assertTrue(a.getChildren().contains(b));
       assertTrue(e.getChildren().contains(b));
@@ -987,8 +988,8 @@ public class TransformationTest {
       assertTrue(c.getChildren().contains(d));
 
       OutputUtils.verboseOn();
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent");
       OutputUtils.mathematicaPlot(graph,2);
       assertTrue(a.getChildren().contains(b));
       assertTrue(e.getChildren().contains(b));
@@ -1025,8 +1026,8 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(c.getChildren().contains(d));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent");
       OutputUtils.mathematicaPlot(graph,2);
       assertTrue(a.getChildren().contains(b));
       assertTrue(e.getChildren().contains(b));
@@ -1064,8 +1065,8 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(c.getChildren().contains(d));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"reduceAllSingleChildParent");
       OutputUtils.mathematicaPlot(graph,2);
       assertTrue(a.getChildren().contains(b));
       assertTrue(e.getChildren().contains(b));
@@ -1102,7 +1103,7 @@ public class TransformationTest {
 
       double initialLocalTTCOfa = a.getLocalTtc();
 
-      GraphTransformer graphTransformer = new GraphTransformer();
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
       graphTransformer.reduce(graph);
 
       OutputUtils.mathematicaPlot(graph,1);
@@ -1132,8 +1133,8 @@ public class TransformationTest {
       assertTrue(a.getChildren().contains(b));
       assertTrue(b.getChildren().contains(a));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops");
 
       OutputUtils.mathematicaPlot(graph,1);
 
@@ -1165,8 +1166,8 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(c.getChildren().contains(a));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops");
 
       OutputUtils.mathematicaPlot(graph,1);
 
@@ -1197,8 +1198,8 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(c.getChildren().contains(a));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops");
 
       OutputUtils.mathematicaPlot(graph,1);
 
@@ -1229,8 +1230,8 @@ public class TransformationTest {
       assertTrue(b.getChildren().contains(c));
       assertTrue(c.getChildren().contains(a));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops");
 
       OutputUtils.mathematicaPlot(graph,1);
 
@@ -1257,8 +1258,8 @@ public class TransformationTest {
       assertTrue(a.getChildren().contains(b));
       assertTrue(b.getChildren().contains(a));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops");
 
       OutputUtils.mathematicaPlot(graph,1);
 
@@ -1284,8 +1285,8 @@ public class TransformationTest {
       assertTrue(a.getChildren().contains(b));
       assertTrue(b.getChildren().contains(a));
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops");
 
       OutputUtils.mathematicaPlot(graph,1);
 
@@ -1313,8 +1314,8 @@ public class TransformationTest {
       graph.addAttackSteps(a,b,c,d,e);
       graph.sample();
 
-      GraphTransformer graphTransformer = new GraphTransformer();
-      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops",graph);
+      GraphTransformer graphTransformer = new GraphTransformer(graph);
+      Whitebox.invokeMethod(graphTransformer,"deleteUnproductiveLoops");
 
       OutputUtils.mathematicaPlot(graph,1);
 

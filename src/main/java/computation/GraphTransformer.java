@@ -17,17 +17,36 @@ import static computation.OrdinalOperations.plus;
 
 public class GraphTransformer {
 
+    private Graph graph;
+
+    public GraphTransformer(Graph g) {
+        this.graph = g;
+    }
+
     public void reduce(Graph graph) {
-        OutputUtils.printVerbose("Reducing Graph "+graph.getOwnerComponentName()+" ("+graph.attackStepsAsSet().size()+" asteps)...\n");
-        TimeWatch tm = TimeWatch.start();
+        this.graph = graph;
+        OutputUtils.printVerbose("Reducing Graph " + graph.getOwnerComponentName() + " (" + graph.attackStepsAsSet().size() + " asteps)...\n");
         graph.hardReset();
-        deleteAllRedundantEdges(graph);
+        graph.sample();
+        TimeWatch tm = TimeWatch.start();
+        deleteAllRedundantEdges();
         OutputUtils.printTerseVerbose("deleteAllRedundantEdges: " + (tm.time(TimeUnit.MILLISECONDS)) + " ms.");
-        deleteUnproductiveLoops(graph);
-        retainOnlyExitStepAncestors(graph);
-        retainOnlyEntryStepProgeny(graph);
-        reduceAllSingleChildParent(graph);
-        OutputUtils.printTerseVerbose("One pass reduction: " + (tm.time(TimeUnit.MILLISECONDS)) + " ms.\n");
+        int graph_size = graph.size();
+        tm = TimeWatch.start();
+        deleteUnproductiveLoops();
+        OutputUtils.printTerseVerbose("deleteUnproductiveLoops: " + (tm.time(TimeUnit.MILLISECONDS)) + " ms; " + (graph_size - graph.size()) + " steps removed.");
+        graph_size = graph.size();
+        tm = TimeWatch.start();
+        retainOnlyExitStepAncestors();
+        OutputUtils.printTerseVerbose("retainOnlyExitStepAncestors: " + (tm.time(TimeUnit.MILLISECONDS)) + " ms; " + (graph_size - graph.size()) + " steps removed.");
+        graph_size = graph.size();
+        tm = TimeWatch.start();
+        retainOnlyEntryStepProgeny();
+        OutputUtils.printTerseVerbose("retainOnlyEntryStepProgeny: " + (tm.time(TimeUnit.MILLISECONDS)) + " ms; " + (graph_size - graph.size()) + " steps removed.");
+        graph_size = graph.size();
+        tm = TimeWatch.start();
+        reduceAllSingleChildParent();
+        OutputUtils.printTerseVerbose("reduceAllSingleChildParent: " + (tm.time(TimeUnit.MILLISECONDS)) + " ms; " + (graph_size - graph.size()) + " steps removed.\n");
     }
 
     /* **************************************
@@ -45,7 +64,7 @@ public class GraphTransformer {
     // infinite-ttc parent will result in infinity, which can be disconnected
     // from an attackStepMin if there is any other parent.
 
-    private void deleteAllRedundantEdges(Graph graph) {
+    private void deleteAllRedundantEdges() {
         int iSource = 0;
         OutputUtils.printVerbose("STEP 1: Redundant Edges removal\n");
         // TODO We should probably start from the entry nodes? Except roots that are not entry nodes because it means they are
@@ -56,7 +75,7 @@ public class GraphTransformer {
             graph.ordinalCompute(source);
             if (source.getName().contains("ost1.aSLRDisab")) {
                 OutputUtils.plotOn();
-                OutputUtils.mathematicaPlot(graph,5);
+                OutputUtils.mathematicaPlot(graph, 5);
                 OutputUtils.plotOff();
             }
             deleteRedundantEdgesFromSource(graph, source);
@@ -85,19 +104,19 @@ public class GraphTransformer {
         HashSet<AttackStep> sourceConnectedParentsFixed;
         HashSet<AttackStep> sourceConnectedParents;
 
-        for (AttackStep child: children) {
+        for (AttackStep child : children) {
             sourceConnectedParentsFixed = child.getParentsConnectedToSource(source);
             sourceConnectedParents = new HashSet<>(sourceConnectedParentsFixed);
             if (!visited.contains(child) && sourceConnectedParentsFixed.size() > 1
-                                        && !sourceConnectedParentsFixed.stream().allMatch(parent -> parent.isAny())) {
+                    && !sourceConnectedParentsFixed.stream().allMatch(parent -> parent.isAny())) {
                 OutputUtils.printVeryVerbose("Target is " + child.getName());
                 if (sourceConnectedParentsFixed.size() > 1) {
                     // TODO refactor this!
-                    for (AttackStep firstParent: sourceConnectedParentsFixed) {
-                        for(AttackStep secondParent : sourceConnectedParentsFixed) {
+                    for (AttackStep firstParent : sourceConnectedParentsFixed) {
+                        for (AttackStep secondParent : sourceConnectedParentsFixed) {
                             if (!firstParent.equals(secondParent) &&
-                                sourceConnectedParents.contains(firstParent) &&
-                                sourceConnectedParents.contains(secondParent)) {
+                                    sourceConnectedParents.contains(firstParent) &&
+                                    sourceConnectedParents.contains(secondParent)) {
                                 int removalStatus = tryOrdinalReduce(child, firstParent, secondParent);
                                 if (removalStatus > 0)
                                     graph.updateDescendantsOfSource();
@@ -168,11 +187,16 @@ public class GraphTransformer {
                 }
             }
         }
-         return 0;
+        return 0;
     }
 
     private void deleteConnection(AttackStep child, AttackStep parent) {
         parent.removeChild(child);
+        if (child instanceof AttackStepMax) {
+            Set<AttackStep> intersect = graph.getEntrySteps().stream()
+                    .filter(child.getAncestors()::contains).collect(Collectors.toSet());
+            if (intersect.isEmpty()) ((AttackStepMax) child).setLocked(true);
+        }
         OutputUtils.printVerbose("Cut the cord between " + parent.getName() + " and " + child.getName() + ".");
     }
 
@@ -185,9 +209,9 @@ public class GraphTransformer {
     /**
      * The goal is to remove loops that start AND finish from the same exit-step, without containing other entry and exitsteps
      * We first get the Strongly connected component of an exit step, then check for each node if their is a path
-     * @param graph
+     *
      */
-    private void deleteUnproductiveLoops(Graph graph) {
+    private void deleteUnproductiveLoops() {
         OutputUtils.printVerbose("STEP 2: Loops removal\n");
         Set<AttackStep> toBeDeleted = new HashSet<>();
         Set<AttackStep> toBePreserved = new HashSet<>();
@@ -195,28 +219,31 @@ public class GraphTransformer {
             Tarjan tarjan = new Tarjan();
             // SCC does not contain the exitStep itself. Removed in Tarjan
             Set<AttackStep> sccOfExStep = tarjan.getSccOf(exitStep);
-            OutputUtils.printVeryVerbose("---------------------\nLoops from "+exitStep.getName()+".\n---------------------");
+            OutputUtils.printVeryVerbose("---------------------\nLoops from " + exitStep.getName() + ".\n---------------------");
             if (!sccOfExStep.isEmpty()
                     /*&& sccOfExStep.stream()
                     .filter(as -> as.getOrder().equals(Order.ENTRYSTEP) || as.getOrder().equals(Order.EXITSTEP))
                     .collect(Collectors.toList()).isEmpty()*/
                     ) {
-                toBeDeleted.addAll(sccOfExStep);
-                graph.getExitSteps().stream().filter(es -> !es.equals(exitStep))
+                toBeDeleted.addAll(sccOfExStep.stream()
+                        .filter(as -> !(as.getOrder().equals(Order.ENTRYSTEP) || as.getOrder().equals(Order.EXITSTEP)))
+                        .collect(Collectors.toList()));
+                graph.getExitSteps().stream().filter(exit -> !exit.equals(exitStep))
                         .forEach(es -> toBePreserved.addAll(exitStep.descendantsTo(es)));
-                graph.getEntrySteps().stream().filter(es -> !es.equals(exitStep))
+                graph.getEntrySteps().stream().filter(entry -> !entry.equals(exitStep))
                         .forEach(es -> toBePreserved.addAll(exitStep.ancestorsTo(es)));
             }
         }
         for (AttackStep entryStep : graph.getEntrySteps()) {
             Tarjan tarjan = new Tarjan();
             // SCC does not contain the entryStep itself. Removed in Tarjan
-            Set<AttackStep> sccOfExStep = tarjan.getSccOf(entryStep);
-            OutputUtils.printVeryVerbose("---------------------\nLoops from "+entryStep.getName()+".\n---------------------");
-            if (!sccOfExStep.isEmpty() && sccOfExStep.stream()
-                    .filter(as -> as.getOrder().equals(Order.ENTRYSTEP) || as.getOrder().equals(Order.EXITSTEP))
-                    .collect(Collectors.toList()).isEmpty()) {
-                toBeDeleted.addAll(sccOfExStep);
+            Set<AttackStep> sccOfEnStep = tarjan.getSccOf(entryStep);
+            OutputUtils.printVeryVerbose("---------------------\nLoops from " + entryStep.getName() + ".\n---------------------");
+            if (!sccOfEnStep.isEmpty()) {
+                // Let's not remove entry and exit steps, shall we.
+                toBeDeleted.addAll(sccOfEnStep.stream()
+                        .filter(as -> !(as.getOrder().equals(Order.ENTRYSTEP) || as.getOrder().equals(Order.EXITSTEP)))
+                        .collect(Collectors.toList()));
                 graph.getExitSteps().stream().filter(es -> !es.equals(entryStep))
                         .forEach(es -> toBePreserved.addAll(entryStep.descendantsTo(es)));
                 graph.getEntrySteps().stream().filter(es -> !es.equals(entryStep))
@@ -241,7 +268,7 @@ public class GraphTransformer {
     *************************************** */
 
     // Attack steps that do not lead to the exit step can be deleted.
-    private int retainOnlyExitStepAncestors(Graph graph) {
+    private int retainOnlyExitStepAncestors() {
         OutputUtils.printVerbose("STEP 3: Loose attack step removal (From exit steps)\n");
         int nReduced = 0;
         Set<AttackStep> ancestors = new HashSet<>();
@@ -251,9 +278,13 @@ public class GraphTransformer {
         }
         for (AttackStep attackStep : graph.attackStepsAsSet()) {
             if (!ancestors.contains(attackStep)) {
-                OutputUtils.printVerbose("Deleted attack step " + attackStep.getName() + ", as it does not lead to any exit step.");
+                // if we remove this attackstep, make sure that we lock a Max child that might become doable after removal of this step
+                attackStep.getChildren().forEach(as -> {
+                    if (as instanceof AttackStepMax) ((AttackStepMax) as).setLocked(true);
+                });
                 graph.clearAttackStep(attackStep);
                 nReduced++;
+                OutputUtils.printVerbose("Deleted attack step " + attackStep.getName() + ", as it does not lead to any exit step.");
             }
         }
         return nReduced;
@@ -265,7 +296,7 @@ public class GraphTransformer {
 
     *************************************** */
 
-    private int retainOnlyEntryStepProgeny(Graph graph) {
+    private int retainOnlyEntryStepProgeny() {
         OutputUtils.printVerbose("STEP 4: Loose attack step removal (From entry steps)\n");
         int nReduced = 0;
         Set<AttackStep> progeny = new HashSet<>();
@@ -276,6 +307,10 @@ public class GraphTransformer {
         }
         for (AttackStep attackStep : graph.attackStepsAsSet()) {
             if (!progeny.contains(attackStep)) {
+                // if we remove this attackstep, make sure that we lock a Max child that might become doable after removal of this step
+                attackStep.getChildren().forEach(as -> {
+                    if (as instanceof AttackStepMax) ((AttackStepMax) as).setLocked(true);
+                });
                 graph.clearAttackStep(attackStep);
                 nReduced++;
                 OutputUtils.printVerbose("Deleted attack step " + attackStep.getName() + ", as it does not emanate from any entry step.");
@@ -290,7 +325,7 @@ public class GraphTransformer {
 
     *************************************** */
 
-    private void reduceAllSingleChildParent(Graph graph) {
+    private void reduceAllSingleChildParent() {
         boolean didReduce = true;
         OutputUtils.printVerbose("STEP 5: reduceAllSingleChildParent");
         while (didReduce) {
@@ -316,16 +351,16 @@ public class GraphTransformer {
         if (attackStep.getExpectedParents().size() == 1) {
             AttackStep parent = attackStep.getExpectedParents().iterator().next();
             // No need to call ancestry and progeny here, right? because
-            if ((parent.getExpectedParents().size() > 0 || attackStep.getChildren().size() > 0)
-//                    && parent.isMidStep() && attackStep.isMidStep()) {
-                    &&  !parent.isExitStep() && !attackStep.isEntryStep()
+            if (!(attackStep instanceof AttackStepMax && ((AttackStepMax)attackStep).isLocked()) &&
+                    (parent.getExpectedParents().size() > 0 || attackStep.getChildren().size() > 0)
+                    && !parent.isExitStep() && !attackStep.isEntryStep()
                     && (parent.isMidStep() || attackStep.isMidStep())) { // one of the nodes must be normal
                 if (parent.getChildren().size() == 1) {
-                    OutputUtils.printVeryVerbose("Found single-parent-single-child: " + parent.getName() + "-" + attackStep.getName());
+                    OutputUtils.printVerbose("Found single-parent-single-child: " + parent.getName() + "-" + attackStep.getName());
                     edgeContractionBetweenChildAndParent(attackStep, graph, parent);
                     return true;
                 } else if (attackStep.getLocalTtc() == 0) {
-                    OutputUtils.printVeryVerbose("Found child " + attackStep.getName() + " with localTTC==0 and single parent: " + parent.getName() + ".");
+                    OutputUtils.printVerbose("Found child " + attackStep.getName() + " with localTTC==0 and single parent: " + parent.getName() + ".");
                     edgeContractionBetweenChildAndParent(attackStep, graph, parent);
                     return true;
                 }
@@ -336,12 +371,12 @@ public class GraphTransformer {
 
     private void edgeContractionBetweenChildAndParent(AttackStep child, Graph graph, AttackStep parent) {
         OutputUtils.printVerbose("Merging " + parent.getName() + " with " + child.getName() + " (singleChildWithSingleParent)");
-        parent.removeChild(child);
         parent.setLocalTtc(parent.getLocalTtc() + child.getLocalTtc());
         parent.addLocalTtcDistributions(child.getLocalTtcDistributions());
-        parent.setOrdinalLocalTtc(plus(parent.getOrdinalLocalTtc(),child.getOrdinalLocalTtc()));
+        parent.setOrdinalLocalTtc(plus(parent.getOrdinalLocalTtc(), child.getOrdinalLocalTtc()));
         parent.setName(parent.getName() + "-" + child.getName());
         parent.mergeWith(child);
+        parent.removeChild(child);
 
         new HashSet<>(child.getChildren()).stream().filter(gchi -> !gchi.equals(parent)).
                 forEach(grandChild -> {

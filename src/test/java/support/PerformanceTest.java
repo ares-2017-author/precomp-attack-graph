@@ -7,8 +7,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.*;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
@@ -424,6 +426,7 @@ public class PerformanceTest {
         OutputUtils.printVerbose("Computation time once reduced: " + computation_time_reduced + " ms.");
     }
 
+    @Ignore
     @Test
     public void testMC1600b() throws InterruptedException {
         OutputUtils.verboseOff();
@@ -699,47 +702,14 @@ public class PerformanceTest {
         OutputUtils.printVerbose("Computation time once reduced: " + computation_time_reduced + " ms.");
     }
 
-
     @Test
-    public void testMC450Correctness() {
+    public void testMC500cross() throws InterruptedException {
+        // 501; 0; Infinity; 28.3; 3; 3; 0.0042395215; 8; 0.9; 3; 0.3; 2; 0.1; 2; 0.15; 0.65; 0
         // OutputUtils.verboseOn();
-        Graph graph = TestUtils.generateRandomGraph(3, 4, 450, 4, 0.7, 2, 0.3, 1, 0.2, 1, 0.15, 0.65);
-        int initSize = graph.attackStepsAsList().size();
-
-        graph.softReset();
-        graph.sample();
-        Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
-
-        graphReduced.softReset();
-        graphReduced.sample();
-        graphReduced.reduce();
-        graphReduced.compute();
-
-        OutputUtils.verboseOn();
-        List<AttackStep> unreducedExits = graph.getExitSteps();
-        unreducedExits.stream().sorted((e1,e2) -> Double.compare(e1.getTtc(),e2.getTtc()));
-        List<AttackStep> reducedExits = graphReduced.getExitSteps();
-        reducedExits.stream().sorted((e1,e2) -> Double.compare(e1.getTtc(),e2.getTtc()));
-        for (int i = 0; i < unreducedExits.size(); i++) {
-            AttackStep unreducedExitStep = unreducedExits.get(i);
-            AttackStep reducedExitStep = reducedExits.get(i);
-            OutputUtils.printVerbose("Unreduced " + unreducedExitStep.getName() + ": " + unreducedExitStep.getTtc());
-            OutputUtils.printVerbose("Reduced " + reducedExitStep.getName() + ": " + reducedExitStep.getTtc());
-//            assertTrue(unreducedExitStep.getTtc() == reducedExitStep.getTtc());
+        synchronized (this) {
+            this.wait(12000);
         }
-
-        OutputUtils.printVerbose("unreduced attacksteps: " + initSize);
-        OutputUtils.printVerbose("Reduced attacksteps: " + graphReduced.attackStepsAsList().size());
-        OutputUtils.plotOn();
-        OutputUtils.mathematicaPlot(graph,2);
-        OutputUtils.mathematicaPlot(graphReduced,2);
-    }
-
-    @Test
-    public void testMC150Correctness() {
-        // OutputUtils.verboseOn();
-        Graph graph = TestUtils.generateRandomGraph(3, 3, 150, 6, 0.3, 3, 0.2, 0.8);
+        Graph graph = TestUtils.generateRandomGraph(3, 3, 500, 2, 0.7, 3, 0.3, 5, .5, 2, .15, 0.65);
         int initSize = graph.attackStepsAsList().size();
 
         graph.softReset();
@@ -754,51 +724,17 @@ public class PerformanceTest {
 
         OutputUtils.verboseOn();
         List<AttackStep> unreducedExits = graph.getExitSteps();
-        unreducedExits.stream().sorted((e1,e2) -> Double.compare(e1.getTtc(),e2.getTtc()));
+        unreducedExits.sort(Comparator.comparingDouble(AttackStep::getTtc));
         List<AttackStep> reducedExits = graphReduced.getExitSteps();
-        reducedExits.stream().sorted((e1,e2) -> Double.compare(e1.getTtc(),e2.getTtc()));
+        reducedExits.sort(Comparator.comparingDouble(AttackStep::getTtc));
         for (int i = 0; i < unreducedExits.size(); i++) {
             AttackStep unreducedExitStep = unreducedExits.get(i);
             AttackStep reducedExitStep = reducedExits.get(i);
             OutputUtils.printVerbose("Unreduced " + unreducedExitStep.getName() + ": " + unreducedExitStep.getTtc());
             OutputUtils.printVerbose("Reduced " + reducedExitStep.getName() + ": " + reducedExitStep.getTtc());
-//            assertTrue(unreducedExitStep.getTtc() == reducedExitStep.getTtc());
-        }
-
-        OutputUtils.printVerbose("unreduced attacksteps: " + initSize);
-        OutputUtils.printVerbose("Reduced attacksteps: " + graphReduced.attackStepsAsList().size());
-        OutputUtils.plotOn();
-        OutputUtils.mathematicaPlot(graph,2);
-        OutputUtils.mathematicaPlot(graphReduced,2);
-    }
-
-    @Test
-    public void testMC100Correctness() {
-        // OutputUtils.verboseOn();
-        Graph graph = TestUtils.generateRandomGraph(2, 2, 100, 2, 0.3, 3, 0.2, 0.6);
-        int initSize = graph.attackStepsAsList().size();
-
-        graph.softReset();
-        graph.sample();
-        Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
-
-        graphReduced.softReset();
-        graphReduced.sample();
-        graphReduced.reduce();
-        graphReduced.compute();
-
-        OutputUtils.verboseOn();
-        List<AttackStep> unreducedExits = graph.getExitSteps();
-        unreducedExits.stream().sorted((e1,e2) -> Double.compare(e1.getTtc(),e2.getTtc()));
-        List<AttackStep> reducedExits = graphReduced.getExitSteps();
-        reducedExits.stream().sorted((e1,e2) -> Double.compare(e1.getTtc(),e2.getTtc()));
-        for (int i = 0; i < unreducedExits.size(); i++) {
-            AttackStep unreducedExitStep = unreducedExits.get(i);
-            AttackStep reducedExitStep = reducedExits.get(i);
-            OutputUtils.printVerbose("Unreduced " + unreducedExitStep.getName() + ": " + unreducedExitStep.getTtc());
-            OutputUtils.printVerbose("Reduced " + reducedExitStep.getName() + ": " + reducedExitStep.getTtc());
-//            assertTrue(unreducedExitStep.getTtc() == reducedExitStep.getTtc());
+            assertTrue((reducedExitStep.getTtc() == 0.0 && unreducedExitStep.getTtc() == 0.0)
+                    || (unreducedExitStep.getTtc() - reducedExitStep.getTtc() > -.3
+                    && unreducedExitStep.getTtc() - reducedExitStep.getTtc() < .3));
         }
 
         OutputUtils.printVerbose("unreduced attacksteps: " + initSize);

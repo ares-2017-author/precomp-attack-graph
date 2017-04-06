@@ -78,18 +78,20 @@ public class GraphComputer {
                 OutputUtils.printVeryVerbose("Most extreme TTC for " + target.getName() + " so far is " + target.getExtremeTtcSoFar() + ".");
                 target.setDecisiveParent(caller);
                 updateTtcAndShiftBucket(target);
+                target.setPerformed(true);
             }
             target.removeRemainingParent(caller);
         }
     }
 
     private void updateTtc(AttackStepMax target, AttackStep caller) {
-        if (!target.noRemainingParents()) {
+        if (!target.isLocked() && !target.noRemainingParents()) {
             double totalTtc = caller.getTtc() + target.getLocalTtc();
             OutputUtils.printVeryVerbose("Calling " + target.getName() + " (ttc=" + target.getTtc() + ") from " + caller.getName() + " (ttc=" + caller.getTtc() + ").");
             if (target.isExtreme(totalTtc)) {
                 target.setExtremeTtcSoFar(totalTtc);
                 target.setExtremeParentSoFar(caller);
+                target.setDecisiveParent(caller);
                 OutputUtils.printVeryVerbose("Most extreme TTC for " + target.getName() + " so far is " + target.getExtremeTtcSoFar() + ".");
             }
             target.removeRemainingParent(caller);
@@ -114,6 +116,7 @@ public class GraphComputer {
                 }
                 target.setExtremeTtcSoFar(finalTtc);
                 updateTtcAndShiftBucket(target);
+                target.setPerformed(true);
             }
         }
     }

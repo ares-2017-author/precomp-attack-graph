@@ -27,6 +27,7 @@ public class GraphComputerTest {
         for(AttackStep as : graph.attackStepsAsList()) {
             asResults.put(as, new AttackStepResult(as));
         }
+        OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(graph,1);
 
         gc.computeGraph(graph);

@@ -217,8 +217,6 @@ public class DFSTest {
         assertFalse(ancestorsJtoA.contains(k));
     }
 
-
-    @Ignore
     @Test
     public void testAncestorsTo2(){
         AttackStep a = new AttackStepMin("a", new ConstantRealDistribution(0), Order.ENTRYSTEP);
@@ -250,7 +248,9 @@ public class DFSTest {
         Graph gr = new Graph("loos");
         gr.addAttackSteps(a,b,c,d,e,f,g,h,i,j,k);
 
-        Set<AttackStep> ancestorsJtoA = DFS.depthFirstAncestorsTo2(j,a);
+
+        DFS dfs = new DFS();
+        Set<AttackStep> ancestorsJtoA = dfs.depthFirstAncestorsTo2(j,a);
         System.out.println(ancestorsJtoA.stream().map(AttackStep::getName).collect(Collectors.joining("; ")));
 
         OutputUtils.plotOn();
@@ -504,8 +504,6 @@ public class DFSTest {
         assertFalse(ancestorsAS6toAS3.contains(as6));
     }
 
-
-    @Ignore
     @Test
     public void ancestorsLoopTo2() {
         Graph gr = new Graph("LooseGraph");
@@ -524,33 +522,34 @@ public class DFSTest {
         as5.connectToChild(as6);
         gr.addAttackSteps(as1, as2, as3, as4, as5, as6);
 
-        Set<AttackStep> ancestorsAS5toAS2 = DFS.depthFirstAncestorsTo2(as5,as2);
-        Set<AttackStep> ancestorsAS6toAS3 = DFS.depthFirstAncestorsTo2(as6,as3);
-        Set<AttackStep> ancestorsAS6toAS1 = DFS.depthFirstAncestorsTo2(as6,as1);
-        Set<AttackStep> ancestorsAS4toAS1 = DFS.depthFirstAncestorsTo2(as4,as1);
+        DFS dfs = new DFS();
+        Set<AttackStep> ancestorsAS5toAS2 = dfs.depthFirstAncestorsTo2(as5,as2);
+        Set<AttackStep> ancestorsAS6toAS3 = dfs.depthFirstAncestorsTo2(as6,as3);
+        Set<AttackStep> ancestorsAS6toAS1 = dfs.depthFirstAncestorsTo2(as6,as1);
+        Set<AttackStep> ancestorsAS4toAS1 = dfs.depthFirstAncestorsTo2(as4,as1);
 
         OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(gr,2);
 
-        assertFalse(ancestorsAS5toAS2.contains(as5));
         assertTrue(ancestorsAS5toAS2.contains(as4));
         assertTrue(ancestorsAS5toAS2.contains(as3));
         assertFalse(ancestorsAS5toAS2.contains(as2));
         assertFalse(ancestorsAS5toAS2.contains(as1));
         assertFalse(ancestorsAS5toAS2.contains(as6));
+        assertFalse(ancestorsAS5toAS2.contains(as5));
 
         assertTrue(ancestorsAS6toAS1.contains(as5));
         assertTrue(ancestorsAS6toAS1.contains(as4));
         assertTrue(ancestorsAS6toAS1.contains(as3));
-        assertFalse(ancestorsAS6toAS1.contains(as1));
         assertTrue(ancestorsAS6toAS1.contains(as2));
+        assertFalse(ancestorsAS6toAS1.contains(as1));
         assertFalse(ancestorsAS6toAS1.contains(as6));
 
+        assertTrue(ancestorsAS4toAS1.contains(as3));
+        assertTrue(ancestorsAS4toAS1.contains(as2));
         assertFalse(ancestorsAS4toAS1.contains(as5));
         assertFalse(ancestorsAS4toAS1.contains(as4));
-        assertTrue(ancestorsAS4toAS1.contains(as3));
         assertFalse(ancestorsAS4toAS1.contains(as1));
-        assertTrue(ancestorsAS4toAS1.contains(as2));
         assertFalse(ancestorsAS4toAS1.contains(as6));
 
         assertTrue(ancestorsAS6toAS3.contains(as5));

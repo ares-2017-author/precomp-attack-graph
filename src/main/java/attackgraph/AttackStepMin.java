@@ -11,8 +11,6 @@ import java.util.Set;
 
 public class AttackStepMin extends AttackStep {
 
-   private AttackStep decisiveParent;
-
    public AttackStepMin(String name, AbstractRealDistribution localTtcDistribution, Order order) {
       super(name, localTtcDistribution, order);
    }
@@ -43,14 +41,6 @@ public class AttackStepMin extends AttackStep {
       OutputUtils.printVeryVerbose("Lowest ordinal TTC for " + getName() + " was " + extremeOrdinalTtcSoFar() + ".");
       setExtremeOrdinalTtcSoFar(OrdinalOperations.min(extremeOrdinalTtcSoFar(),totalOrdinalTtc));
       OutputUtils.printVeryVerbose("Lowest ordinal TTC for " + getName() + " is updated to " + extremeOrdinalTtcSoFar() + ".");
-   }
-
-   public AttackStep getDecisiveParent() {
-      return  decisiveParent;
-   }
-
-   public void setDecisiveParent(AttackStep decisiveParent) {
-      this.decisiveParent = decisiveParent;
    }
 
    public boolean hasAMaxDecisiveAncestor() {

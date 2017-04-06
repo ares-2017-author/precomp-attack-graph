@@ -14,7 +14,7 @@ public class Graph implements Observer {
 
    private List<AttackStep>         attackSteps             = new ArrayList<>();
 
-   private GraphTransformer graphTransformer        = new GraphTransformer();
+   private GraphTransformer graphTransformer        = new GraphTransformer(this);
    private GraphComputer graphComputer           = new GraphComputer();
    private GraphOrdinalComputer graphOrdinalComputer    = new GraphOrdinalComputer();
    private static int               randomSeed              = 2;
@@ -180,12 +180,13 @@ public class Graph implements Observer {
    }
 
    public void zeroEntrySteps() {
-// TODO remove this loop by keep track of the entrysteps?
+// TODO remove this loop by keeping track of the entrysteps?
       for (AttackStep attackStep : attackSteps) {
          if (attackStep.isEntryStep()) {
             OutputUtils.printVeryVerbose("Zeroing TTC of " + attackStep.getName() + " to " + attackStep.getLocalTtc());
             attackStep.setTtc(attackStep.getLocalTtc());
             attackStep.setExtremeTtcSoFar(attackStep.getLocalTtc());
+            attackStep.removeAllRemainingParent();
          }
          else {
             attackStep.setTtc(attackStep.getDefaultTtc());

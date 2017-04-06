@@ -12,6 +12,7 @@ import java.util.Set;
 public class AttackStepMax extends AttackStep {
 
    private AttackStep extremeParentSoFar;
+   private boolean locked = false;
 
    public AttackStepMax(String name, AbstractRealDistribution localTtcDistribution, Order order) {
       super(name, localTtcDistribution, order);
@@ -28,7 +29,7 @@ public class AttackStepMax extends AttackStep {
 
    @Override
    public boolean isExtreme(double totalTtc) {
-      return getExtremeTtcSoFar() < totalTtc;
+      return getExtremeTtcSoFar() == 0 && extremeParentSoFar == null || getExtremeTtcSoFar() < totalTtc;
    }
 
    @Override
@@ -50,4 +51,14 @@ public class AttackStepMax extends AttackStep {
    public AttackStep getExtremeParentSoFar() {
       return extremeParentSoFar;
    }
+
+
+   public boolean isLocked() {
+      return locked;
+   }
+
+   public void setLocked(boolean locked) {
+      this.locked = locked;
+   }
+
 }

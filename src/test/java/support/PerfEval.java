@@ -17,6 +17,27 @@ import java.util.stream.IntStream;
 
 public class PerfEval {
 
+    public static void mainZ(String[] args) throws InterruptedException {
+
+        Graph graph = TestUtils.generateRandomGraph(3, 3, 500, 2, 0.7, 3, 0.3, 5, .5, 2, .15, 0.65);
+        int initSize = graph.attackStepsAsList().size();
+        OutputUtils.plotOn();
+        OutputUtils.mathematicaPlot(graph,1);
+        OutputUtils.plotOff();
+
+        graph.softReset();
+        graph.sample();
+        Graph graphReduced = TestUtils.cloneGraph(graph);
+        graph.compute();
+
+        graphReduced.softReset();
+        graphReduced.sample();
+        graphReduced.reduce();
+        graphReduced.compute();
+
+        OutputUtils.verboseOn();
+    }
+
     public static void main7(String[] args) throws InterruptedException {
         OutputUtils.verboseOn();
         Graph graph = TestUtils.generateRandomGraph(2, 3, 2500, 3, 0.7, 2, 0.3, 1, 0.15, 2, 0.45, 0.7);
@@ -103,78 +124,95 @@ public class PerfEval {
         double pBinomialBackEdges = 0.1;
         double pMinAttackSteps = 0.65;
         int iterations = 50;
+        int rowThreshold = -1;
         for (int maxSteps = 100; maxSteps < 10001; maxSteps = maxSteps + 100) {
-            performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+            performMultipleReductions(csvFileWriter, nEntrySteps, 1, 1, nExitSteps, 1, 1, maxSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
         }
     }
 
     /* Individual experiments */
     public static void main(String args[]) throws InterruptedException {
-        CSVFileWriter csvFileWriter = new CSVFileWriter("graph-experiments-indiv-nosize.csv");
+        CSVFileWriter csvFileWriter = new CSVFileWriter("graph-experiments-indiv-nosize-cross.csv");
 //        synchronized (args) {
-//            args.wait(11000);
+//          args.wait(11000);
 //        }
         int nEntrySteps = 3;
+        float aBetaEntry = 1.3f;
+        float bBetaEntry = 1;
         int nExitSteps = 3;
+        float aBetaExit = 1.3f;
+        float bBetaExit = 1;
         int maxAttackSteps = 500;
+        int rowThreshold = -1;
         int nBinomialChildren = 2;
         double pBinomialChildren = 0.7;
-        int nBinomialForwardEdges = 1;
-        double pBinomialForwardEdges = 0.2;
-        int nBinomialCrossEdges = 1;
+        int nBinomialForwardEdges = 3;
+        double pBinomialForwardEdges = 0.3;
+        int nBinomialCrossEdges = 2;
         double pBinomialCrossEdges = 0.15;
-        int nBinomialBackEdges = 1;
+        int nBinomialBackEdges = 2;
         double pBinomialBackEdges = 0.1;
         double pMinAttackSteps = 0.65;
         int iterations = 10;
 
-        /* **** ENTRY STEPS **** */
+        // **** ENTRY STEPS ****
         for (int nEntry = 1; nEntry < 100; nEntry = nEntry + 2) {
-            performMultipleReductions(csvFileWriter, nEntry, nExitSteps, maxAttackSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+            performMultipleReductionsParallel(csvFileWriter, nEntry, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
         }
 
-        /* **** EXIT STEPS **** */
+        // **** EXIT STEPS ****
         for (int nExit = 1; nExit < 100; nExit = nExit + 2) {
-            performMultipleReductions(csvFileWriter, nEntrySteps, nExit, maxAttackSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+            performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExit, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
         }
 
-        /* **** Graph Size **** */
-   /*     for (int maxSteps = 100; maxSteps < 10001; maxSteps = maxSteps + 100) {
-            performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
-        }*/
-
-        /* **** DirectChildren **** */
+        // **** DirectChildren ****
         for (double probaChild = 0.1; probaChild <= 1.0; probaChild = probaChild + .4) {
             for (int nbChildren = 1; nbChildren < 10; nbChildren++) {
-                performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxAttackSteps, nbChildren, probaChild, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+                performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nbChildren, probaChild, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
             }
         }
 
-        /* **** ForwardEdges **** */
+        // **** ForwardEdges ****
         for (double pBinomialFW = 0.1; pBinomialFW <= 1.0; pBinomialFW = pBinomialFW + .4) {
             for (int nBinomialFW = 1; nBinomialFW < 8; nBinomialFW++) {
-                performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxAttackSteps, nBinomialChildren, pBinomialChildren, nBinomialFW, pBinomialFW, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+                performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialFW, pBinomialFW, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
             }
         }
 
-        /* **** BackEdges **** */
+        // **** BackEdges ****
         for (double pBinomialBW = 0.1; pBinomialBW <= 1.0; pBinomialBW = pBinomialBW + .4) {
             for (int nBinomialBW = 1; nBinomialBW < 8; nBinomialBW++) {
-                performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxAttackSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBW, pBinomialBW, pMinAttackSteps, iterations);
-            }
-        }
-
-        /* **** CrossEdges **** */
-        for (double pBinomialCW = 0.1; pBinomialCW <= 1.0; pBinomialCW = pBinomialCW + .4) {
-            for (int nBinomialCW = 1; nBinomialCW < 8; nBinomialCW++) {
-                performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxAttackSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCW, pBinomialCW, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+                performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBW, pBinomialBW, pMinAttackSteps, iterations);
             }
         }
 
         /* **** OR/AND ratio **** */
         for (double orAndRatio = 0.0; orAndRatio <= 1.01; orAndRatio = orAndRatio + .025) {
-            performMultipleReductions(csvFileWriter, nEntrySteps, nExitSteps, maxAttackSteps, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, orAndRatio, iterations);
+            performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, orAndRatio, iterations);
+        }
 
+        // **** Graph Size ****
+        for (int maxSteps = 500; maxSteps < 10001; maxSteps = maxSteps + 500) {
+            performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+        }
+
+        /* **** CrossEdges **** */
+        for (double pBinomialCW = 0.1; pBinomialCW <= 1.0; pBinomialCW = pBinomialCW + .4) {
+            for (int nBinomialCW = 1; nBinomialCW < 8; nBinomialCW++) {
+                performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCW, pBinomialCW, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+            }
+        }
+
+        // **** Entry and ExitStep positions ****
+        for (float variate = 1; variate < 6.1; variate = variate + .5f) {
+            performMultipleReductionsParallel(csvFileWriter, nEntrySteps, variate, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+            performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, variate, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+            performMultipleReductionsParallel(csvFileWriter, nEntrySteps, variate, bBetaEntry, nExitSteps, aBetaExit, variate, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
+        }
+
+        // **** Threshold ****
+        for (int thresh = maxAttackSteps; thresh < 10; thresh = thresh - 50) {
+            performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
         }
 
     }
@@ -304,7 +342,7 @@ public class PerfEval {
     }
 
 
-    private static void performMultipleReductions(CSVFileWriter CSVFileWriter, int nEntrySteps, int nExitSteps, int maxAttackSteps, int nBinomialChildren, double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges, int nBinomialCrossEdges, double pBinomialCrossEdges, int nBinomialBackEdges, double pBinomialBackEdges, double pMinAttackSteps, int iterations) {
+    private static void performMultipleReductions(CSVFileWriter CSVFileWriter, int nEntrySteps, float aBetaEntry, float bBetaEntry, int nExitSteps, float aBetaExit, float bBetaExit, int maxAttackSteps, int rowThreshold, int nBinomialChildren, double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges, int nBinomialCrossEdges, double pBinomialCrossEdges, int nBinomialBackEdges, double pBinomialBackEdges, double pMinAttackSteps, int iterations) {
         int real_size = 0;
         float reduced_size = 0;
         float min_children = 0;
@@ -319,7 +357,7 @@ public class PerfEval {
         float reduction_ratio = 0;
         TimeWatch tm;
         for (int i = 0; i < iterations; i++) {
-            Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxAttackSteps,
+            Graph graph = TestUtils.generateRandomGraph(maxAttackSteps, rowThreshold, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit,
                     nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges,
                     nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps);
             graph.sample();
@@ -356,7 +394,7 @@ public class PerfEval {
     }
 
 
-    private static void performMultipleReductionsParallel(CSVFileWriter CSVFileWriter, int nEntrySteps, int nExitSteps, int maxAttackSteps, int nBinomialChildren, double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges, int nBinomialCrossEdges, double pBinomialCrossEdges, int nBinomialBackEdges, double pBinomialBackEdges, double pMinAttackSteps, int iterations) {
+    private static void performMultipleReductionsParallel(CSVFileWriter CSVFileWriter, int nEntrySteps, float aBetaEntry, float bBetaEntry, int nExitSteps, float aBetaExit, float bBetaExit, int maxAttackSteps, int rowThreshold, int nBinomialChildren, double pBinomialChildren, int nBinomialForwardEdges, double pBinomialForwardEdges, int nBinomialCrossEdges, double pBinomialCrossEdges, int nBinomialBackEdges, double pBinomialBackEdges, double pMinAttackSteps, int iterations) {
         int real_size = 0;
         float reduced_size = 0;
         float min_children = 0;
@@ -372,7 +410,7 @@ public class PerfEval {
         List<List<Object>> data = new LinkedList<>();
         List<Integer> iter_values = ContiguousSet.create(Range.closed(1, iterations), DiscreteDomain.integers()).asList();
         iter_values.parallelStream().forEach(i -> {
-            Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxAttackSteps,
+            Graph graph = TestUtils.generateRandomGraph(maxAttackSteps, rowThreshold, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit,
                     nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges,
                     nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps);
             graph.sample();

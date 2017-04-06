@@ -1,10 +1,15 @@
 package support;
 
 import attackgraph.AttackStep;
+import com.google.common.collect.Sets;
 
 import java.util.*;
 
 public class DFS {
+
+    HashMap<AttackStep,Set<AttackStep>> grey;
+    Set<AttackStep> results;
+    HashMap<AttackStep,Boolean> black;
 
     /**
      * All ancestors between a target node and its potential ancestor s.
@@ -67,23 +72,49 @@ public class DFS {
         }
     }
 
-    public static Set<AttackStep> depthFirstDescendantsTo2(AttackStep s, AttackStep t) {
+    public Set<AttackStep> depthFirstDescendantsTo2(AttackStep s, AttackStep t) {
+        grey = new HashMap<>();
+        black = new HashMap<>();
         Set<AttackStep> descendants = new HashSet<>();
-        for(AttackStep child: s.getChildren()) descendants.addAll(depthFirstTo(child,t, new HashSet<>(), false));
+        for(AttackStep child: s.getChildren()) descendants.addAll(depthFirstTo(child,t, Sets.newHashSet(s), false));
+        descendants.remove(s);
         return descendants;
     }
 
-    public static Set<AttackStep> depthFirstAncestorsTo2(AttackStep s, AttackStep t) {
+    public Set<AttackStep> depthFirstAncestorsTo2(AttackStep s, AttackStep t) {
+        grey = new HashMap<>();
+        black = new HashMap<>();
         Set<AttackStep> ancestors = new HashSet<>();
-        for(AttackStep parent: s.getExpectedParents()) ancestors.addAll(depthFirstTo(parent,t, new HashSet<>(), true));
+        for(AttackStep parent: s.getExpectedParents()) {
+            ancestors.addAll(depthFirstTo(parent,t, Sets.newHashSet(s), true));
+        }
+        ancestors.remove(s);
         return ancestors;
     }
 
-    private static Set<AttackStep> depthFirstTo(AttackStep current, AttackStep t, Set<AttackStep> visited, boolean ascending) {
-        if (visited.contains(current)) return new HashSet<>();
-        if (current.equals(t)) return visited;
+    private Set<AttackStep> depthFirstTo(AttackStep current, AttackStep t, Set<AttackStep> currentPath, boolean ascending) {
+        // Found target!
+        if (current.equals(t)) return currentPath;
+        // loop? No, we don't want loops.
+        if (currentPath.contains(current)) return new HashSet<>();
 
-        visited.add(current);
+        // all the node's children have been visited already
+        if (black.keySet().contains(current)) {
+            // the node is in a path that leads to t
+            if(black.get(current) == true) return currentPath;
+            // no path including this node lead to t
+            else return new HashSet<>();
+        }
+
+        // already being explored? let's way for the various outcomes then
+        if (grey.keySet().contains(current)) {
+            grey.get(current).addAll(currentPath);
+            return new HashSet<>();
+        }
+
+        grey.put(current,new HashSet<>());
+        Set<AttackStep> localVisited = new HashSet<>(currentPath);
+        localVisited.add(current);
         Set<AttackStep> adjacentASs;
         if (ascending)
             adjacentASs = current.getExpectedParents();
@@ -92,7 +123,12 @@ public class DFS {
 
         Set<AttackStep> results = new HashSet<>();
         for (AttackStep adjNode : adjacentASs) {
-            results.addAll(depthFirstTo(adjNode,t, visited, ascending));
+            results.addAll(depthFirstTo(adjNode,t, localVisited, ascending));
+        }
+        if (results.isEmpty()) black.put(current,false);
+        else {
+            black.put(current, true);
+            results.addAll(grey.get(current));
         }
         return results;
     }

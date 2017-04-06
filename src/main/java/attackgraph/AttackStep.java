@@ -39,8 +39,10 @@ public abstract class AttackStep extends Observable {
    private Set<AttackStep>          remainingOrdinalParents = new HashSet<>();
    private boolean                  hasParentUninfluencedBySource;
    private Set<AttackStep>          expectedParents         = new HashSet<>();
+   private AttackStep               decisiveParent;
 
    private Set<AttackStep>          descendants             = new HashSet<>();
+   private boolean                  performed;
 
    AttackStep(String name, AbstractRealDistribution localTtcDistribution, Order order) {
       this(name, Sets.newHashSet(localTtcDistribution),order);
@@ -67,6 +69,7 @@ public abstract class AttackStep extends Observable {
 
       setTtc(getDefaultTtc());
       setExtremeTtcSoFar(getDefaultTtc());
+      setPerformed(false);
       ordinalReset();
       // setExtremeOrdinalTtcSoFar(OrdinalTtc.getOrdinalTtcCorrespondingToReal(extremeTtcSoFar));
    }
@@ -80,9 +83,9 @@ public abstract class AttackStep extends Observable {
    }
 
    public void hardReset() {
-      softReset();
       // The reseeding means that each reset will also reset the pseudo-random sequence
       this.getLocalTtcDistributions().stream().forEach(ltd -> ltd.reseedRandomGenerator(randomSeed));
+      softReset();
    }
 
    public void mergeWith(AttackStep attackStep) {
@@ -178,7 +181,8 @@ public abstract class AttackStep extends Observable {
     * @return Set of ancestors AttackStep
      */
    public Set<AttackStep> ancestorsTo(AttackStep source) {
-      Set<AttackStep> ancestors = DFS.depthFirstAncestorsTo(this,source);//source, new HashSet<>());
+      DFS dfs = new DFS();
+      Set<AttackStep> ancestors = dfs.depthFirstAncestorsTo2(this,source);//source, new HashSet<>());
       ancestors.remove(this);
       return ancestors;
    }
@@ -203,7 +207,8 @@ public abstract class AttackStep extends Observable {
     * @return
      */
    public Set<AttackStep> descendantsTo(AttackStep target) {
-      Set<AttackStep> progeny = DFS.depthFirstDescendantsTo(this,target);//source, new HashSet<>());
+      DFS dfs = new DFS();
+      Set<AttackStep> progeny = dfs.depthFirstDescendantsTo2(this,target);//source, new HashSet<>());
       progeny.remove(this);
       return progeny;
    }
@@ -412,6 +417,11 @@ public abstract class AttackStep extends Observable {
       }
    }
 
+   public void removeExpectedParentStatic(AttackStep as) {
+      expectedParents.remove(as);
+      remainingParents.remove(as);
+   }
+
    public void removeChild(AttackStep child) {
       children.remove(child);
       child.removeExpectedParent(this);
@@ -488,4 +498,23 @@ public abstract class AttackStep extends Observable {
       this.depth = depth;
    }
 
+   public void removeAllRemainingParent() {
+      this.remainingParents.clear();
+   }
+
+   public boolean hasBeenPerformed() {
+      return performed;
+   }
+
+   public void setPerformed(boolean performed) {
+      this.performed = performed;
+   }
+
+   public AttackStep getDecisiveParent() {
+      return  decisiveParent;
+   }
+
+   public void setDecisiveParent(AttackStep decisiveParent) {
+      this.decisiveParent = decisiveParent;
+   }
 }
