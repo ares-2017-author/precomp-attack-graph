@@ -18,9 +18,11 @@ import static computation.OrdinalOperations.plus;
 public class GraphTransformer {
 
     private Graph graph;
+    private GraphOrdinalComputer goc;
 
     public GraphTransformer(Graph g) {
         this.graph = g;
+        goc = new GraphOrdinalComputer(g);
     }
 
     public void reduce(Graph graph) {
@@ -67,17 +69,14 @@ public class GraphTransformer {
     private void deleteAllRedundantEdges() {
         int iSource = 0;
         OutputUtils.printVerbose("STEP 1: Redundant Edges removal\n");
+        // Let's compute the progeny of entry nodes.
+
         // TODO We should probably start from the entry nodes? Except roots that are not entry nodes because it means they are
         // not reachable. We'd probably have fastest results this way.
         while (iSource < graph.size()) {
             AttackStep source = graph.getAttackStep(iSource);
             OutputUtils.printVeryVerbose("Source is " + source.getName());
-            graph.ordinalCompute(source);
-            if (source.getName().contains("ost1.aSLRDisab")) {
-                OutputUtils.plotOn();
-                OutputUtils.mathematicaPlot(graph, 5);
-                OutputUtils.plotOff();
-            }
+            goc.ordinalCompute(source);
             deleteRedundantEdgesFromSource(graph, source);
             iSource++;
         }

@@ -52,7 +52,7 @@ public class GraphTest {
       // OutputUtils.verboseOn();
       Graph graph = TestUtils.generateRandomGraph(2, 2, 50, 3, 0.3, 3, 0.2, 0.5);
       graph.zeroEntrySteps();
-      graph.compute();
+      GraphComputer goc = new GraphComputer(graph); goc.compute();
       OutputUtils.printVerbose(Double.toString(graph.getExitSteps().get(0).getTtc()));
    }
 
@@ -61,14 +61,15 @@ public class GraphTest {
       Graph graph = TestUtils.generateRandomGraph(2, 2, 100, 3, 0.7, 2, 0.3, 1, 0.15, 2, 0.45, 0.7);
       graph.sample();
       graph.zeroEntrySteps();
-      graph.compute();
+      GraphComputer goc = new GraphComputer(graph); goc.compute();
       OutputUtils.plotOn();
       OutputUtils.printVerbose(Double.toString(graph.getExitSteps().get(0).getTtc()));
       OutputUtils.mathematicaPlot(graph,2);
       OutputUtils.plotOff();
       graph.softReset();
       OutputUtils.verboseOn();
-      graph.reduce();
+      GraphTransformer gt = new GraphTransformer(graph);
+      gt.reduce(graph);
       OutputUtils.plotOn();
       OutputUtils.printVerbose(Double.toString(graph.getExitSteps().get(0).getTtc()));
       OutputUtils.mathematicaPlot(graph,2);
@@ -78,10 +79,10 @@ public class GraphTest {
    public void testClone() {
       Graph original = TestUtils.generateRandomGraph(2, 2, 50, 3, 0.3, 3, 0.2, 0.5);
       original.zeroEntrySteps();
-      original.compute();
+      GraphComputer goc = new GraphComputer(original); goc.compute();
       Graph clone = TestUtils.cloneGraph(original);
       clone.zeroEntrySteps();
-      clone.compute();
+      goc = new GraphComputer(clone); goc.compute();
       assert (clone.attackStepsAsSet().size() == original.attackStepsAsSet().size());
       for (int i = 0; i < original.getExitSteps().size(); i++) {
          assert (clone.getExitSteps().get(i).getTtc() == original.getExitSteps().get(i).getTtc());
@@ -95,8 +96,8 @@ public class GraphTest {
       original.zeroEntrySteps();
       Graph clone = TestUtils.cloneGraph(original);
       clone.zeroEntrySteps();
-      original.compute();
-      clone.compute();
+      GraphComputer goc = new GraphComputer(original); goc.compute();
+      goc = new GraphComputer(clone); goc.compute();
       assert (clone.attackStepsAsSet().size() == original.attackStepsAsSet().size());
       for (int i = 0; i < original.getExitSteps().size(); i++) {
          assert (clone.getExitSteps().get(i).getTtc() == original.getExitSteps().get(i).getTtc());
@@ -108,7 +109,7 @@ public class GraphTest {
       OutputUtils.plotOn();
       Graph graph = TestUtils.generateRandomGraph(1, 1, 15, 3, 0.4, 3, 0.2, 0.5);
       graph.sample();
-      graph.ordinalCompute(graph.getEntrySteps().get(0));
+      GraphOrdinalComputer goc = new GraphOrdinalComputer(graph);        goc.ordinalCompute(graph.getEntrySteps().get(0));
       OutputUtils.mathematicaPlot(graph, 2);
    }
 

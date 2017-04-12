@@ -22,7 +22,7 @@ public class GraphComputerTest {
     public void testMaxNodeComparisonsA() {
         Graph graph = TestUtils.generateRandomGraph(1, 1, 15, 3, 0.4, 3, 0.2, 0.5);
         graph.sample();
-        GraphComputer gc = new GraphComputer();
+        GraphComputer gc = new GraphComputer(graph);
         HashMap<AttackStep,AttackStepResult> asResults = new HashMap<>();
         for(AttackStep as : graph.attackStepsAsList()) {
             asResults.put(as, new AttackStepResult(as));
@@ -30,19 +30,19 @@ public class GraphComputerTest {
         OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(graph,1);
 
-        gc.computeGraph(graph);
+        gc.compute();
         for(AttackStep as : graph.attackStepsAsList()) {
             asResults.get(as).setMax0Ttc(as.getTtc());
         }
         graph.attackStepsAsList().stream().forEach(AttackStep::softReset);
 
-        gc.computeGraph(graph);
+        gc.compute();
         for(AttackStep as : graph.attackStepsAsList()) {
             asResults.get(as).setMax1Ttc(as.getTtc());
         }
         graph.attackStepsAsList().stream().forEach(AttackStep::softReset);
 
-        gc.computeGraph(graph);
+        gc.compute();
         for(AttackStep as : graph.attackStepsAsList()) {
             asResults.get(as).setSumTtc(as.getTtc());
             System.out.println(as.getName()+": "+asResults.get(as).getMax0Ttc()+" / "

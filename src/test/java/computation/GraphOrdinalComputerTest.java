@@ -36,7 +36,7 @@ public class GraphOrdinalComputerTest {
         assertTrue(as2.getChildren().contains(as4));
         assertTrue(as1.getChildren().contains(as3));
 
-        graph.ordinalCompute(as1);
+        GraphOrdinalComputer goc = new GraphOrdinalComputer(graph);        goc.ordinalCompute(as1);
 
     }
 
@@ -67,7 +67,7 @@ public class GraphOrdinalComputerTest {
         assertTrue(as2.getChildren().contains(as4));
         assertTrue(as1.getChildren().contains(as3));
 
-        graph.ordinalCompute(as1);
+        GraphOrdinalComputer goc = new GraphOrdinalComputer(graph);        goc.ordinalCompute(as1);
         assertTrue(as1.getOrdinalTtc().equals(OrdinalTtcValue.SOURCE));
         assertTrue(as2.getOrdinalTtc().equals(OrdinalTtcValue.SOURCE));
         assertTrue(as3.getOrdinalTtc().equals(OrdinalTtcValue.GTESOURCE));
@@ -102,7 +102,7 @@ public class GraphOrdinalComputerTest {
         assertTrue(as1.getChildren().contains(as3));
 
         OutputUtils.plotOn();
-        graph.ordinalCompute(as1);
+        GraphOrdinalComputer goc = new GraphOrdinalComputer(graph);        goc.ordinalCompute(as1);
         OutputUtils.mathematicaPlot(graph,5);
         assertTrue(as1.getOrdinalTtc().equals(OrdinalTtcValue.SOURCE));
         assertTrue(as2.getOrdinalTtc().equals(OrdinalTtcValue.SOURCE));
@@ -151,7 +151,7 @@ public class GraphOrdinalComputerTest {
         OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(graph,5);
 
-        graph.ordinalCompute(as1);
+        GraphOrdinalComputer goc = new GraphOrdinalComputer(graph);        goc.ordinalCompute(as1);
         OutputUtils.mathematicaPlot(graph,5);
         assertTrue(as1.getOrdinalTtc().equals(OrdinalTtcValue.SOURCE));
         assertTrue(as2.getOrdinalTtc().equals(OrdinalTtcValue.SOURCE));
@@ -190,7 +190,7 @@ public class GraphOrdinalComputerTest {
         graph.hardReset();
         graph.sample();
 
-        graph.ordinalCompute(as1);
+        GraphOrdinalComputer goc = new GraphOrdinalComputer(graph);        goc.ordinalCompute(as1);
         OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(graph,5);
         assertTrue(as1.getOrdinalTtc().equals(OrdinalTtcValue.SOURCE));
@@ -235,7 +235,7 @@ public class GraphOrdinalComputerTest {
         as6.setOrdinalLocalTtc(OrdinalTtcValue.ZERO);
         as7.setOrdinalLocalTtc(OrdinalTtcValue.ANY);
 
-        graph.ordinalCompute(as1);
+        GraphOrdinalComputer goc = new GraphOrdinalComputer(graph);        goc.ordinalCompute(as1);
         OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(graph,5);
         assertTrue(as1.getOrdinalTtc().equals(OrdinalTtcValue.SOURCE));
@@ -269,9 +269,10 @@ public class GraphOrdinalComputerTest {
         assertTrue(as1.getChildren().contains(as3));
         assertTrue(as2.getChildren().contains(as3));
 
-        agentGraph.ordinalCompute(as1);
-        agentGraph.ordinalCompute(as2);
-        agentGraph.ordinalCompute(as3);
+        GraphOrdinalComputer goc = new GraphOrdinalComputer(agentGraph);
+        goc.ordinalCompute(as1);
+        goc.ordinalCompute(as2);
+        goc.ordinalCompute(as3);
 
     }
 

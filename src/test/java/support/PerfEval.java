@@ -5,6 +5,8 @@ import com.github.jesg.dither.Dither;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Range;
+import computation.GraphComputer;
+import computation.GraphTransformer;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -28,12 +30,13 @@ public class PerfEval {
         graph.softReset();
         graph.sample();
         Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
+        GraphComputer goc = new GraphComputer(graph); goc.compute();
 
         graphReduced.softReset();
         graphReduced.sample();
-        graphReduced.reduce();
-        graphReduced.compute();
+        GraphTransformer gt = new GraphTransformer(graphReduced);
+        gt.reduce(graphReduced);
+        goc = new GraphComputer(graphReduced); goc.compute();
 
         OutputUtils.verboseOn();
     }
@@ -58,7 +61,8 @@ public class PerfEval {
             size = graph.size();
             TimeWatch tm = TimeWatch.start();
             if (cpt > 0) OutputUtils.verboseOn();
-            graph.reduce();
+            GraphTransformer gt = new GraphTransformer(graph);
+            gt.reduce(graph);
             long reduction_time = tm.time(TimeUnit.MILLISECONDS);
             reduced_size = graph.size();
             OutputUtils.verboseOn();
@@ -95,7 +99,9 @@ public class PerfEval {
             float mean_cross = graph.getMeanCrossEdges();
             float graph_density = graph.getGraphDensity();
             TimeWatch tm = TimeWatch.start();
-            graph.reduce();
+
+            GraphTransformer gt = new GraphTransformer(graph);
+            gt.reduce(graph);
             double reduce_time = tm.time(TimeUnit.MILLISECONDS);
             float reduction_ratio = ((float) real_size / graph.size());
             csvFileWriter.printNewRecord((int) testData[0], (int) testData[1], real_size,
@@ -132,7 +138,7 @@ public class PerfEval {
 
     /* Individual experiments */
     public static void main(String args[]) throws InterruptedException {
-        CSVFileWriter csvFileWriter = new CSVFileWriter("graph-experiments-indiv-nosize-cross.csv");
+        CSVFileWriter csvFileWriter = new CSVFileWriter("graph-experiments-indiv-nosize-rest.csv");
 //        synchronized (args) {
 //          args.wait(11000);
 //        }
@@ -144,7 +150,7 @@ public class PerfEval {
         float bBetaExit = 1;
         int maxAttackSteps = 500;
         int rowThreshold = -1;
-        int nBinomialChildren = 2;
+        int nBinomialChildren = 3;
         double pBinomialChildren = 0.7;
         int nBinomialForwardEdges = 3;
         double pBinomialForwardEdges = 0.3;
@@ -153,8 +159,8 @@ public class PerfEval {
         int nBinomialBackEdges = 2;
         double pBinomialBackEdges = 0.1;
         double pMinAttackSteps = 0.65;
-        int iterations = 50;
-
+        int iterations = 30;
+/*
         // **** ENTRY STEPS ****
         for (int nEntry = 1; nEntry < 100; nEntry = nEntry + 2) {
             performMultipleReductionsParallel(csvFileWriter, nEntry, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
@@ -186,7 +192,7 @@ public class PerfEval {
             }
         }
 
-        /* **** OR/AND ratio **** */
+        // **** OR/AND ratio ****
         for (double orAndRatio = 0.0; orAndRatio <= 1.01; orAndRatio = orAndRatio + .025) {
             performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, orAndRatio, iterations);
         }
@@ -195,8 +201,8 @@ public class PerfEval {
         for (int maxSteps = 500; maxSteps < 10001; maxSteps = maxSteps + 500) {
             performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCrossEdges, pBinomialCrossEdges, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
         }
-
-        /* **** CrossEdges **** */
+*/
+        // **** CrossEdges ****
         for (double pBinomialCW = 0.1; pBinomialCW <= 1.0; pBinomialCW = pBinomialCW + .4) {
             for (int nBinomialCW = 1; nBinomialCW < 8; nBinomialCW++) {
                 performMultipleReductionsParallel(csvFileWriter, nEntrySteps, aBetaEntry, bBetaEntry, nExitSteps, aBetaExit, bBetaExit, maxAttackSteps, rowThreshold, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges, nBinomialCW, pBinomialCW, nBinomialBackEdges, pBinomialBackEdges, pMinAttackSteps, iterations);
@@ -247,7 +253,8 @@ public class PerfEval {
                 float mean_cross = graph.getMeanCrossEdges();
                 float graph_density = graph.getGraphDensity();
                 tm = TimeWatch.start();
-                graph.reduce();
+                GraphTransformer gt = new GraphTransformer(graph);
+                gt.reduce(graph);
                 double reduce_time = tm.time(TimeUnit.MILLISECONDS);
                 float reduction_ratio = ((float) real_size / graph.size());
                 CSVFileWriter.printNewRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, nBinomialChildren, pBinomialChildren, nBinomialForwardEdges, pBinomialForwardEdges,
@@ -292,7 +299,8 @@ public class PerfEval {
                         float mean_cross = graph.getMeanCrossEdges();
                         float graph_density = graph.getGraphDensity();
                         TimeWatch tm = TimeWatch.start();
-                        graph.reduce();
+                        GraphTransformer gt = new GraphTransformer(graph);
+                        gt.reduce(graph);
                         double reduce_time = tm.time(TimeUnit.MILLISECONDS);
                         float reduction_ratio = ((float) real_size / graph.size());
                         csvFileWriter.addNewRecord(nEntrySteps, nExitSteps, real_size, reduction_ratio, nbChildren, pBinomialTreeEdges, nBinomialForwardEdges, pBinomialForwardEdges,
@@ -318,7 +326,8 @@ public class PerfEval {
         OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(graph,1);
         OutputUtils.plotOff();
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         System.out.println("graph size: "+graph.size());
     }
 
@@ -371,7 +380,8 @@ public class PerfEval {
             mean_cross += graph.getMeanCrossEdges();
             graph_density += graph.getGraphDensity();
             tm = TimeWatch.start();
-            graph.reduce();
+            GraphTransformer gt = new GraphTransformer(graph);
+            gt.reduce(graph);
             reduce_time += tm.time(TimeUnit.MILLISECONDS);
             reduced_size += graph.size();
             reduction_ratio += ((float) real_size/ graph.size());
@@ -425,7 +435,8 @@ public class PerfEval {
             instance_data.add(graph.getMeanCrossEdges()); // 6 mean cross
             instance_data.add(graph.getGraphDensity()); // 7 density
             TimeWatch tm = TimeWatch.start();
-            graph.reduce();
+            GraphTransformer gt = new GraphTransformer(graph);
+            gt.reduce(graph);
             instance_data.add(tm.time(TimeUnit.MILLISECONDS)); // 8. reduce_time
             instance_data.add(graph.size()); // 9. reduced_size
             instance_data.add(((float) realSize / graph.size())); //10. reduction_ratio
@@ -433,6 +444,7 @@ public class PerfEval {
             data.add(instance_data);
             System.out.print("blip; ");
         });
+        while (data.size() < iterations) {}
         for(List<Object> inst : data) {
             min_children += (int)inst.get(0);
             max_children += (int)inst.get(1);

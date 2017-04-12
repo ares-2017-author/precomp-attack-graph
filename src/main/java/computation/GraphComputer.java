@@ -8,10 +8,11 @@ import support.OutputUtils;
 
 public class GraphComputer {
     BucketList bucketList;
+    Graph graph;
 
-    public GraphComputer () {}
+    public GraphComputer (Graph g) {graph = g;}
 
-    public void computeGraph(Graph graph) {
+    public void compute() {
 
         int nReachedNodes = 0;
         this.bucketList = new BucketList(0, 1000, 4096);

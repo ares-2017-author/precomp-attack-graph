@@ -2,6 +2,9 @@ package support;
 
 import attackgraph.AttackStep;
 import attackgraph.Graph;
+import computation.GraphComputer;
+import computation.GraphOrdinalComputer;
+import computation.GraphTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,14 +31,15 @@ public class CorrectnessTest {
         graph.softReset();
         graph.sample();
         Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
+        GraphComputer goc = new GraphComputer(graph); goc.compute();
 
         graphReduced.softReset();
         graphReduced.sample();
+        GraphTransformer gt = new GraphTransformer(graphReduced);
         OutputUtils.verboseOn();
-        graphReduced.reduce();
+        gt.reduce(graphReduced);
         OutputUtils.verboseOff();
-        graphReduced.compute();
+        goc = new GraphComputer(graphReduced); goc.compute();
 
 
         List<AttackStep> unreducedExits = graph.getExitSteps().stream().filter(as -> as.hasBeenPerformed()).collect(Collectors.toList());
@@ -80,13 +84,14 @@ public class CorrectnessTest {
 
         graph.softReset();
         graph.sample();
+        GraphComputer goc = new GraphComputer(graph); goc.compute();
         Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
 
         graphReduced.softReset();
         graphReduced.sample();
-        graphReduced.reduce();
-        graphReduced.compute();
+        GraphTransformer gt = new GraphTransformer(graphReduced);
+        gt.reduce(graphReduced);
+        goc = new GraphComputer(graphReduced); goc.compute();
 
         List<AttackStep> unreducedExits = graph.getExitSteps().stream().filter(as -> as.hasBeenPerformed()).collect(Collectors.toList());
         unreducedExits.sort(Comparator.comparingDouble(AttackStep::getTtc));
@@ -125,18 +130,19 @@ public class CorrectnessTest {
     public void testMC500Correctness() {
         // 501; 0; Infinity; 28.3; 3; 3; 0.0042395215; 8; 0.9; 3; 0.3; 2; 0.1; 2; 0.15; 0.65; 0
         // OutputUtils.verboseOn();
-        Graph graph = TestUtils.generateRandomGraph(3, 3, 500, 8, 0.9, 3, 0.3, 2, .1, 2, .15, 0.8);
+        Graph graph = TestUtils.generateRandomGraph(3, 3, 500, 4, 0.7, 3, 0.3, 2, .1, 2, .15, 0.8);
         int initSize = graph.attackStepsAsList().size();
 
         graph.softReset();
         graph.sample();
         Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
+        GraphComputer goc = new GraphComputer(graph); goc.compute();
 
         graphReduced.softReset();
         graphReduced.sample();
-        graphReduced.reduce();
-        graphReduced.compute();
+        GraphTransformer gt = new GraphTransformer(graphReduced);
+        gt.reduce(graphReduced);
+        goc = new GraphComputer(graphReduced); goc.compute();
 
         List<AttackStep> unreducedExits = graph.getExitSteps().stream().filter(as -> as.hasBeenPerformed()).collect(Collectors.toList());
         unreducedExits.sort(Comparator.comparingDouble(AttackStep::getTtc));
@@ -180,12 +186,13 @@ public class CorrectnessTest {
         graph.softReset();
         graph.sample();
         Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
+        GraphComputer goc = new GraphComputer(graph); goc.compute();
 
         graphReduced.softReset();
         graphReduced.sample();
-        graphReduced.reduce();
-        graphReduced.compute();
+        GraphTransformer gt = new GraphTransformer(graphReduced);
+        gt.reduce(graphReduced);
+        goc = new GraphComputer(graphReduced); goc.compute();
 
         OutputUtils.verboseOn();
         List<AttackStep> unreducedExits = graph.getExitSteps().stream().filter(as -> as.hasBeenPerformed()).collect(Collectors.toList());
@@ -230,12 +237,15 @@ public class CorrectnessTest {
         graph.softReset();
         graph.sample();
         Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
+        GraphComputer goc = new GraphComputer(graph); goc.compute();
 
         graphReduced.softReset();
-        graphReduced.sample();        OutputUtils.verboseOn();
-        graphReduced.reduce();        OutputUtils.verboseOff();
-        graphReduced.compute();
+        graphReduced.sample();
+        GraphTransformer gt = new GraphTransformer(graphReduced);
+        OutputUtils.verboseOn();
+        gt.reduce(graphReduced);
+        OutputUtils.verboseOff();
+        goc = new GraphComputer(graphReduced); goc.compute();
 
         OutputUtils.verboseOn();
         List<AttackStep> unreducedExits = graph.getExitSteps().stream().filter(as -> as.hasBeenPerformed()).collect(Collectors.toList());
@@ -280,14 +290,13 @@ public class CorrectnessTest {
         graph.softReset();
         graph.sample();
         Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
+        GraphComputer goc = new GraphComputer(graph); goc.compute();
 
         graphReduced.softReset();
         graphReduced.sample();
-        OutputUtils.verboseOn();
-        graphReduced.reduce();
-        OutputUtils.verboseOff();
-        graphReduced.compute();
+        GraphTransformer gt = new GraphTransformer(graphReduced);
+        gt.reduce(graphReduced);
+        goc = new GraphComputer(graphReduced); goc.compute();
 
         OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(graph,2);

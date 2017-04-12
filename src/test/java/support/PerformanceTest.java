@@ -2,6 +2,9 @@ package support;
 
 import attackgraph.AttackStep;
 import attackgraph.Graph;
+import computation.GraphComputer;
+import computation.GraphOrdinalComputer;
+import computation.GraphTransformer;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,18 +36,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -65,18 +69,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -97,18 +102,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -129,18 +135,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -162,18 +169,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -194,18 +202,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -226,18 +235,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -258,18 +268,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -301,18 +312,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -334,18 +346,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -366,19 +379,20 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -402,19 +416,20 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -438,19 +453,20 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
         tm = TimeWatch.start();
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         tm = TimeWatch.start();
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -475,19 +491,20 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
         tm = TimeWatch.start();
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         tm = TimeWatch.start();
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -511,18 +528,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -543,18 +561,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -576,18 +595,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -610,18 +630,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -643,12 +664,13 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         OutputUtils.plotOn();
         OutputUtils.mathematicaPlot(graph,2);
         OutputUtils.plotOff();
@@ -657,7 +679,7 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -679,18 +701,19 @@ public class PerformanceTest {
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_unreduced = tm.time(TimeUnit.MILLISECONDS);
 
 
-        graph.reduce();
+        GraphTransformer gt = new GraphTransformer(graph);
+        gt.reduce(graph);
         long reduction_time = tm.time(TimeUnit.MILLISECONDS);
 
         for (int i = 0; i <= n; i++) {
             graph.softReset();
             graph.sample();
-            graph.compute();
+           GraphComputer goc = new GraphComputer(graph); goc.compute();
         }
         long computation_time_reduced = tm.time(TimeUnit.MILLISECONDS);
 
@@ -715,12 +738,13 @@ public class PerformanceTest {
         graph.softReset();
         graph.sample();
         Graph graphReduced = TestUtils.cloneGraph(graph);
-        graph.compute();
+       GraphComputer goc = new GraphComputer(graph); goc.compute();
 
         graphReduced.softReset();
         graphReduced.sample();
-        graphReduced.reduce();
-        graphReduced.compute();
+        GraphTransformer gt = new GraphTransformer(graphReduced);
+        gt.reduce(graphReduced);
+        goc = new GraphComputer(graphReduced); goc.compute();
 
         OutputUtils.verboseOn();
         List<AttackStep> unreducedExits = graph.getExitSteps();

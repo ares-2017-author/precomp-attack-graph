@@ -167,7 +167,7 @@ public abstract class AttackStep extends Observable {
       Set<AttackStep> children = new HashSet<>(getChildren());
       Set<AttackStep> parents = new HashSet<>(getExpectedParents());
       children.forEach(this::removeChild);
-      parents.forEach(this::removeExpectedParent);
+      parents.forEach(p -> p.removeChild(this));
 
       remainingParents.clear();
       remainingOrdinalParents.clear();
@@ -415,11 +415,6 @@ public abstract class AttackStep extends Observable {
       if (as.getChildren().contains(this)) {
          as.removeChild(this);
       }
-   }
-
-   public void removeExpectedParentStatic(AttackStep as) {
-      expectedParents.remove(as);
-      remainingParents.remove(as);
    }
 
    public void removeChild(AttackStep child) {

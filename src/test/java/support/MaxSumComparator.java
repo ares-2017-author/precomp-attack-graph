@@ -124,20 +124,20 @@ public class MaxSumComparator {
         Graph graph = TestUtils.generateRandomGraph(nEntrySteps, nExitSteps, maxAttackSteps, maxChildren, pBinomialChildren,
                 maxOldParents, pBinomialOldParents, pMinAttackSteps);
         graph.sample();
-        GraphComputer gc = new GraphComputer();
+        GraphComputer gc = new GraphComputer(graph);
         HashMap<AttackStep, AttackStepResult>asResults = new HashMap<>();
         for (AttackStep as : graph.attackStepsAsList()) {
             asResults.put(as, new AttackStepResult(as));
         }
 
-        gc.computeGraph(graph);
+        gc.compute();
         for (AttackStep as : graph.attackStepsAsList()) {
             asResults.get(as).setMax1Ttc(as.getTtc());
         }
 
         graph.attackStepsAsList().stream().forEach(AttackStep::softReset);
 
-        gc.computeGraph(graph);
+        gc.compute();
         for (AttackStep as : graph.attackStepsAsList()) {
             asResults.get(as).setSumTtc(as.getTtc());
         }

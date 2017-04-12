@@ -14,9 +14,6 @@ public class Graph implements Observer {
 
    private List<AttackStep>         attackSteps             = new ArrayList<>();
 
-   private GraphTransformer graphTransformer        = new GraphTransformer(this);
-   private GraphComputer graphComputer           = new GraphComputer();
-   private GraphOrdinalComputer graphOrdinalComputer    = new GraphOrdinalComputer();
    private static int               randomSeed              = 2;
    public static Random             rand                    = new Random(randomSeed);
    private String                   ownerComponent;
@@ -32,17 +29,9 @@ public class Graph implements Observer {
 
    public void sample() {
       // TODO Introduce defenses.
-      // TODO We might also want to sample existence. But the introduction of defenses might be quite similar in effec.
+      // TODO We might also want to sample existence. But the introduction of defenses might be quite similar in effect.
       attackStepsAsSet().forEach(AttackStep::sample);
    }
-
-   public void reduce() {
-      graphTransformer.reduce(this);
-   }
-
-   public void compute() {graphComputer.computeGraph(this); }
-
-   public void ordinalCompute(AttackStep source) { graphOrdinalComputer.ordinalCompute(this, source); }
 
    public void updateDescendantsOfSource() {
       if (!upToDate) {

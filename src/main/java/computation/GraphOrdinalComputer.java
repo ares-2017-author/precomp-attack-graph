@@ -6,7 +6,13 @@ import support.OutputUtils;
 
 public class GraphOrdinalComputer {
 
-    public void ordinalCompute(Graph graph, AttackStep source) {
+    private final Graph graph;
+
+    public GraphOrdinalComputer(Graph graph) {
+        this.graph = graph;
+    }
+
+    public void ordinalCompute(AttackStep source) {
 
         graph.ordinalReset();
 
